@@ -56,7 +56,7 @@
             font-size: 28px;
         }
 
-        #fullscreen-btn {
+        #fullscreen-btn, #skip-fullscreen-btn {
             background: #2ecc71;
             border: none;
             border-radius: 15px;
@@ -68,11 +68,13 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            width: auto;
         }
 
-        #fullscreen-btn:active {
+        #fullscreen-btn:active, #skip-fullscreen-btn:active {
             transform: scale(0.98);
         }
 
@@ -227,6 +229,10 @@
         }
         .action-btn.rules { 
             background: #1abc9c;
+            height: 35px;
+        }
+        .action-btn.reset { 
+            background: #e67e22;
             height: 35px;
         }
 
@@ -620,10 +626,19 @@
             For best experience, enable fullscreen mode.
         </p>
         <button id="fullscreen-btn" onclick="enterFullscreen()">
-            <span>📱</span> Enter Fullscreen
+            <span>📱</span> Enter Fullscreen & Play
         </button>
-        <p style="margin-top: 20px; font-size: 14px; color: #95a5a6;">
-            If fullscreen doesn't work, the game will still function.<br>
+        <button id="skip-fullscreen-btn" onclick="skipFullscreen()" style="background: #7f8c8d; margin-top: 10px;">
+            <span>▶️</span> Play Without Fullscreen
+        </button>
+        <div style="margin-top: 25px; padding: 15px; background: rgba(52, 73, 94, 0.5); border-radius: 10px; max-width: 400px; font-size: 13px; line-height: 1.6;">
+            <p style="color: #ecf0f1; margin-bottom: 8px;"><strong>ℹ️ To Exit Fullscreen:</strong></p>
+            <p style="color: #bdc3c7; margin: 0;">
+                <strong>Desktop:</strong> Press <kbd style="background: #34495e; padding: 2px 6px; border-radius: 3px; font-size: 11px;">ESC</kbd> key<br>
+                <strong>Mobile:</strong> Swipe down from top or use back button
+            </p>
+        </div>
+        <p style="margin-top: 15px; font-size: 13px; color: #95a5a6;">
             Make sure your device is in landscape mode.
         </p>
     </div>
@@ -676,6 +691,10 @@
                 <button class="action-btn rules" onclick="showRules()">
                     <span class="icon">📖</span>
                     <span>Rules</span>
+                </button>
+                <button class="action-btn reset" onclick="resetGame()">
+                    <span class="icon">🔄</span>
+                    <span>Reset</span>
                 </button>
             </div>
 
@@ -799,6 +818,13 @@
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
             }
+        }
+
+        // Skip fullscreen and start game directly
+        function skipFullscreen() {
+            document.getElementById('fullscreen-overlay').style.display = 'none';
+            checkOrientation();
+            initGame();
         }
 
         // Check orientation
@@ -1254,6 +1280,7 @@
                 this.hasRolled = true;
                 this.updateUI();
                 this.playSound(500);
+                this.stopMove();
                 alert(`🎲 Rolled ${this.movesLeft} movement points!`);
             }
             
@@ -1377,6 +1404,7 @@
                     this.updateUI();
                     this.draw();
                     this.playSound(700);
+                    this.stopMove();
                     alert(`🍗 Healed ${tile.healAmount} HP!`);
                     return;
                 }
@@ -1769,6 +1797,9 @@
             }
             
             pickupItem(player, x, y, indoor = false) {
+                // Stop any ongoing movement to prevent involuntary movement after alert
+                this.stopMove();
+                
                 const weapons = ['pistol', 'rifle', 'shotgun', 'smg', 'flamethrower', 'sniper'];
                 const gearTypes = ['armor', 'scope', 'medkit'];
                 
@@ -1826,6 +1857,7 @@
                 this.updateUI();
                 this.draw();
                 
+                this.stopMove();
                 alert(`↪️ Turn passed to Player ${this.currentPlayer + 1}`);
             }
             
@@ -2060,6 +2092,12 @@
 
         function hideRules() {
             document.getElementById('rules-panel').classList.remove('active');
+        }
+
+        function resetGame() {
+            if (confirm('🔄 Reset the game? All progress will be lost.')) {
+                location.reload();
+            }
         }
 
         // Prevent context menu
