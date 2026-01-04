@@ -65,7 +65,7 @@
             75% { transform: rotate(-90deg); }
         }
 
-        /* Main game layout - side-by-side for landscape */
+        /* Main game layout - optimized for small screens */
         #game-container {
             display: none;
             width: 100vw;
@@ -74,83 +74,107 @@
             overflow: hidden;
         }
 
-        /* Full game layout */
+        /* Compact game layout */
         .game-layout {
             display: flex;
             height: 100%;
             width: 100%;
+            gap: 2px;
+            padding: 2px;
+            background: #2d3436;
         }
 
-        /* Left action buttons */
+        /* Left side - compact actions */
         #left-controls {
-            width: 120px;
-            background: rgba(45, 52, 54, 0.9);
+            width: 80px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 20px 10px;
-            gap: 15px;
-            backdrop-filter: blur(10px);
-            border-right: 2px solid #34495e;
-            z-index: 10;
+            padding: 5px;
+            gap: 8px;
         }
 
-        /* Center game area - takes most space */
+        /* Top mini info bar */
+        .mini-info {
+            width: 100%;
+            background: rgba(45, 52, 54, 0.95);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.3;
+            border: 1px solid #34495e;
+            margin-bottom: 5px;
+        }
+
+        .current-player {
+            color: #3498db;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .moves-info {
+            color: #f39c12;
+            margin-top: 2px;
+        }
+
+        /* Action buttons - compact */
+        .action-btn {
+            width: 70px;
+            height: 40px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            transition: all 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            padding: 2px;
+            text-align: center;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .action-btn .icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .action-btn.roll { background: #f39c12; }
+        .action-btn.aim { background: #e74c3c; }
+        .action-btn.shoot { background: #c0392b; }
+        .action-btn.end { background: #7f8c8d; }
+        .action-btn.info { 
+            background: #9b59b6;
+            height: 35px;
+            margin-top: auto;
+        }
+        .action-btn.rules { 
+            background: #1abc9c;
+            height: 35px;
+        }
+
+        /* Center game area - maximizes grid space */
         #center-game {
             flex: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
-            min-width: 0; /* Allow flex shrink */
+            min-width: 0;
+            max-height: 100vh;
+            overflow: hidden;
         }
 
-        /* Top bar in center */
-        #top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background: rgba(45, 52, 54, 0.9);
-            backdrop-filter: blur(10px);
-            flex-shrink: 0;
-            height: 60px;
-        }
-
-        /* Turn indicator */
-        #turn-indicator {
-            font-weight: 600;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background: rgba(0,0,0,0.5);
-            animation: pulse 2s infinite;
-            border: 2px solid #3498db;
-            min-width: 180px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 5px #3498db; }
-            50% { box-shadow: 0 0 20px #3498db; }
-        }
-
-        /* Info button */
-        #info-btn {
-            background: #9b59b6;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            color: white;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* Canvas container - fills center space */
+        /* Canvas container - fills center with safe margins */
         #canvas-container {
             flex: 1;
             display: flex;
@@ -159,103 +183,64 @@
             position: relative;
             overflow: hidden;
             background: #2d3436;
+            padding: 5px;
         }
 
         canvas {
             display: block;
             background: #2d3436;
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Maintain aspect ratio while filling container */
+            max-width: 100%;
+            max-height: 100%;
             touch-action: none;
+            /* Ensure canvas doesn't exceed container */
+            box-sizing: content-box;
         }
 
-        /* Right movement controls */
+        /* Right side - movement controls */
         #right-controls {
-            width: 120px;
-            background: rgba(45, 52, 54, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 10px;
-            gap: 15px;
-            backdrop-filter: blur(10px);
-            border-left: 2px solid #34495e;
-            z-index: 10;
-        }
-
-        /* Action buttons (left side) */
-        .action-btn {
             width: 100px;
-            height: 50px;
-            background: #3498db;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            gap: 4px;
-            touch-action: manipulation;
-            transition: all 0.1s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            align-items: center;
             padding: 5px;
-            text-align: center;
+            gap: 10px;
         }
 
-        .action-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-
-        .action-btn .icon {
-            font-size: 20px;
-        }
-
-        .action-btn .text {
-            font-size: 11px;
-            line-height: 1.2;
-        }
-
-        .action-btn.roll { background: #f39c12; }
-        .action-btn.aim { background: #e74c3c; }
-        .action-btn.shoot { background: #c0392b; }
-        .action-btn.end { background: #7f8c8d; }
-
-        /* Movement controls (right side) */
+        /* Movement D-pad */
         #movement-controls {
             display: grid;
             grid-template-areas:
                 ". up ."
                 "left . right"
                 ". down .";
-            gap: 10px;
+            gap: 8px;
+            background: rgba(45, 52, 54, 0.95);
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #34495e;
         }
 
         .movement-btn {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: #34495e;
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 28px;
+            font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: manipulation;
             transition: all 0.1s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .movement-btn:active {
             background: #2c3e50;
             transform: scale(0.95);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .movement-btn.up { grid-area: up; }
@@ -263,69 +248,89 @@
         .movement-btn.right { grid-area: right; }
         .movement-btn.down { grid-area: down; }
 
-        /* Info panel */
-        #info-panel {
+        /* Weapon info on right side */
+        .weapon-info {
+            width: 100%;
+            background: rgba(45, 52, 54, 0.95);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #34495e;
+            margin-top: 5px;
+        }
+
+        .weapon-name {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        /* Panels overlay */
+        .panel {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 9999;
             display: none;
             flex-direction: column;
             backdrop-filter: blur(5px);
+            overflow-y: auto;
         }
 
-        #info-panel.active {
+        .panel.active {
             display: flex;
         }
 
         .panel-content {
             background: rgba(45, 52, 54, 0.95);
-            margin: 20px;
-            border-radius: 20px;
-            padding: 20px;
+            margin: 15px;
+            border-radius: 15px;
+            padding: 15px;
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            max-height: calc(100vh - 30px);
         }
 
         .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #34495e;
         }
 
         .panel-header h2 {
             color: #3498db;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 5px;
         }
 
         .players-list {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .player-info {
             background: rgba(52, 73, 94, 0.5);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
         }
 
         .player-info.current {
@@ -336,63 +341,96 @@
         .player-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .player-emoji {
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .player-name {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .player-hp {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #2c3e50;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         .player-hp-bar {
             height: 100%;
             background: #2ecc71;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         .player-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 11px;
             color: #95a5a6;
         }
 
-        .game-guide {
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-label {
+            color: #ecf0f1;
+        }
+
+        .gear-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .gear-item {
+            font-size: 14px;
+        }
+
+        /* Rules panel */
+        .rules-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .rule-section {
             background: rgba(52, 73, 94, 0.5);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .game-guide h3 {
-            color: #3498db;
+            border-radius: 10px;
+            padding: 12px;
             margin-bottom: 10px;
-            font-size: 16px;
         }
 
-        .game-guide ul {
+        .rule-section h3 {
+            color: #3498db;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .rule-section ul {
             padding-left: 20px;
             color: #ecf0f1;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .rule-section li {
+            margin-bottom: 5px;
         }
 
         /* Aim overlay */
-        #aim-overlay {
+        #aim-overlay, #shotgun-preview {
             position: absolute;
             top: 0;
             left: 0;
@@ -406,7 +444,7 @@
             position: absolute;
             background: rgba(255, 255, 0, 0.3);
             border: 2px solid yellow;
-            border-radius: 4px;
+            border-radius: 3px;
             animation: pulse-aim 0.8s infinite;
         }
 
@@ -419,32 +457,88 @@
             position: absolute;
             background: rgba(255, 165, 0, 0.3);
             border: 2px solid orange;
-            border-radius: 4px;
+            border-radius: 3px;
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 60;
+            backdrop-filter: blur(5px);
+            border: 1px solid;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .status-aiming {
+            border-color: yellow;
+            color: yellow;
+            animation: pulse-status 1s infinite;
+        }
+
+        @keyframes pulse-status {
+            0%, 100% { box-shadow: 0 0 5px currentColor; }
+            50% { box-shadow: 0 0 15px currentColor; }
         }
 
         /* Mobile optimization */
         @media (max-height: 600px) {
-            #left-controls, #right-controls {
-                width: 100px;
-                padding: 15px 5px;
-            }
+            #left-controls { width: 70px; }
+            #right-controls { width: 85px; }
             
             .action-btn {
-                width: 90px;
-                height: 45px;
-                font-size: 12px;
+                width: 60px;
+                height: 35px;
+                font-size: 10px;
+            }
+            
+            .action-btn .icon {
+                font-size: 14px;
             }
             
             .movement-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 24px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
             }
             
-            #turn-indicator {
+            .mini-info, .weapon-info {
+                font-size: 10px;
+                padding: 6px;
+            }
+            
+            .current-player {
                 font-size: 12px;
-                min-width: 150px;
-                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .game-layout {
+                gap: 1px;
+                padding: 1px;
+            }
+            
+            #left-controls { width: 65px; }
+            #right-controls { width: 75px; }
+            
+            .action-btn {
+                width: 55px;
+                height: 32px;
+                font-size: 9px;
+            }
+            
+            .movement-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
             }
         }
 
@@ -457,23 +551,9 @@
             }
         }
 
-        /* Very wide screens */
-        @media (min-width: 1000px) {
-            #left-controls, #right-controls {
-                width: 150px;
-            }
-            
-            .action-btn {
-                width: 130px;
-                height: 60px;
-                font-size: 14px;
-            }
-            
-            .movement-btn {
-                width: 70px;
-                height: 70px;
-                font-size: 32px;
-            }
+        /* Ensure no scrolling */
+        body, html, #game-container, .game-layout, #center-game, #canvas-container {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -488,38 +568,49 @@
 
     <!-- Main game container -->
     <div id="game-container">
+        <!-- Status indicator for aiming mode -->
+        <div id="status-indicator" class="status-indicator" style="display: none;"></div>
+        
         <div class="game-layout">
-            <!-- Left side: Action buttons -->
+            <!-- Left side: Action buttons and mini info -->
             <div id="left-controls">
+                <!-- Mini player info at top -->
+                <div class="mini-info">
+                    <div class="current-player" id="mini-player">P1</div>
+                    <div class="moves-info" id="mini-moves">Roll dice!</div>
+                </div>
+                
+                <!-- Action buttons -->
                 <button class="action-btn roll" onclick="rollDice()">
                     <span class="icon">🎲</span>
-                    <span class="text">Roll Dice</span>
+                    <span>Roll Dice</span>
                 </button>
                 <button class="action-btn aim" onclick="enterAim()">
                     <span class="icon">🎯</span>
-                    <span class="text">Aim</span>
+                    <span>Aim</span>
                 </button>
                 <button class="action-btn shoot" onclick="shoot()">
                     <span class="icon">🔫</span>
-                    <span class="text">Shoot</span>
+                    <span>Shoot</span>
                 </button>
                 <button class="action-btn end" onclick="endTurn()">
                     <span class="icon">⏭️</span>
-                    <span class="text">End Turn</span>
+                    <span>End Turn</span>
+                </button>
+                
+                <!-- Extra buttons at bottom -->
+                <button class="action-btn info" onclick="showPlayerInfo()">
+                    <span class="icon">👤</span>
+                    <span>Players</span>
+                </button>
+                <button class="action-btn rules" onclick="showRules()">
+                    <span class="icon">📖</span>
+                    <span>Rules</span>
                 </button>
             </div>
 
             <!-- Center: Game area -->
             <div id="center-game">
-                <!-- Top bar -->
-                <div id="top-bar">
-                    <div id="turn-indicator">
-                        Player <span id="current-player-num">1</span>'s Turn
-                        <div id="turn-details" style="font-size: 12px; opacity: 0.8;"></div>
-                    </div>
-                    <button id="info-btn" onclick="toggleInfoPanel()">ℹ️</button>
-                </div>
-
                 <!-- Canvas container -->
                 <div id="canvas-container">
                     <canvas id="gameCanvas"></canvas>
@@ -528,62 +619,129 @@
                 </div>
             </div>
 
-            <!-- Right side: Movement controls -->
+            <!-- Right side: Movement controls and weapon info -->
             <div id="right-controls">
+                <!-- Movement D-pad -->
                 <div id="movement-controls">
                     <button class="movement-btn up" onpointerdown="startMove(0, -1)" onpointerup="stopMove()">↑</button>
                     <button class="movement-btn left" onpointerdown="startMove(-1, 0)" onpointerup="stopMove()">←</button>
                     <button class="movement-btn right" onpointerdown="startMove(1, 0)" onpointerup="stopMove()">→</button>
                     <button class="movement-btn down" onpointerdown="startMove(0, 1)" onpointerup="stopMove()">↓</button>
                 </div>
+                
+                <!-- Weapon info -->
+                <div class="weapon-info">
+                    <div class="weapon-name" id="mini-weapon">Pistol</div>
+                    <div id="mini-range">Range: 4</div>
+                    <div id="mini-damage">Dmg: 20</div>
+                </div>
             </div>
         </div>
 
-        <!-- Info panel -->
-        <div id="info-panel">
+        <!-- Player Info Panel -->
+        <div id="player-info-panel" class="panel">
             <div class="panel-content">
                 <div class="panel-header">
-                    <h2>📊 Game Information</h2>
-                    <button class="close-btn" onclick="toggleInfoPanel()">✕</button>
+                    <h2>👥 Player Information</h2>
+                    <button class="close-btn" onclick="hidePlayerInfo()">✕</button>
                 </div>
                 <div class="players-list" id="players-info">
                     <!-- Player info will be inserted here -->
                 </div>
-                <div class="game-guide">
-                    <h3>🎮 How to Play</h3>
-                    <ul>
-                        <li><strong>Roll Dice</strong> to get movement points</li>
-                        <li><strong>Move</strong> your character with the D-pad</li>
-                        <li><strong>Aim</strong> at opponents to attack</li>
-                        <li><strong>Shoot</strong> when ready to fire</li>
-                        <li><strong>End Turn</strong> to pass to next player</li>
-                        <li>Enter <strong>Houses</strong> for loot and cover</li>
-                        <li>Pick up <strong>Items</strong> to get better gear</li>
-                    </ul>
+            </div>
+        </div>
+
+        <!-- Rules Panel -->
+        <div id="rules-panel" class="panel">
+            <div class="panel-content">
+                <div class="panel-header">
+                    <h2>📖 Game Rules</h2>
+                    <button class="close-btn" onclick="hideRules()">✕</button>
+                </div>
+                <div class="rules-list">
+                    <div class="rule-section">
+                        <h3>🎯 How to Play</h3>
+                        <ul>
+                            <li><strong>Roll Dice</strong> to get movement points (2-12)</li>
+                            <li><strong>Move</strong> your character with the D-pad</li>
+                            <li><strong>Aim</strong> at opponents (starts from your position)</li>
+                            <li><strong>Shoot</strong> when ready to attack</li>
+                            <li><strong>End Turn</strong> when done</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="rule-section">
+                        <h3>🏠 Houses & Items</h3>
+                        <ul>
+                            <li>Enter <strong>Houses</strong> for loot and cover</li>
+                            <li>Inside houses: <strong>Infinite movement</strong></li>
+                            <li>Find <strong>Weapons</strong> in crates 📦</li>
+                            <li>Collect <strong>Armor</strong> 🛡️ for damage reduction</li>
+                            <li>Heal with <strong>Food</strong> 🍗🍎🥤</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="rule-section">
+                        <h3>🔫 Weapons</h3>
+                        <ul>
+                            <li><strong>Pistol</strong>: Balanced (20 dmg, 4 range)</li>
+                            <li><strong>Shotgun</strong>: Spread (40 dmg, 2 range)</li>
+                            <li><strong>Rifle</strong>: Long range (30 dmg, 8 range)</li>
+                            <li><strong>SMG</strong>: Rapid fire (15×2 dmg, 3 range)</li>
+                            <li><strong>Flamethrower</strong>: Ignores cover (25 dmg, 2 range)</li>
+                            <li><strong>Sniper</strong>: High damage (50 dmg, 12 range)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="rule-section">
+                        <h3>🎮 Combat</h3>
+                        <ul>
+                            <li>Line of sight required (except flamethrower)</li>
+                            <li>Trees 🌳 and Rocks 🪨 block shots</li>
+                            <li>Walls 🧱 block movement and shots</li>
+                            <li>Armor reduces damage by 30%</li>
+                            <li>Scope 🔭 increases weapon range</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="rule-section">
+                        <h3>🏆 Winning</h3>
+                        <ul>
+                            <li>Last player standing wins</li>
+                            <li>Eliminate all opponents</li>
+                            <li>Watch your health ❤️</li>
+                            <li>Use cover strategically</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Mobile Battle Royale Game - Full Screen Grid Version
+        // Mobile Battle Royale Game - Final Optimized Version
         class MobileBattleRoyale {
             constructor() {
                 // Core grid constants
                 this.GRID_SIZE = 15;
                 this.INDOOR_SIZE = 8;
-                this.TILE_SIZE = 0; // Will be calculated dynamically
-                this.CANVAS_SIZE = 0; // Will be calculated dynamically
+                this.TILE_SIZE = 0; // Dynamic based on screen
+                this.CANVAS_SIZE = 0; // Dynamic
                 
                 // Game elements
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
                 this.aimOverlay = document.getElementById('aim-overlay');
                 this.shotgunPreview = document.getElementById('shotgun-preview');
-                this.turnIndicator = document.getElementById('turn-indicator');
-                this.turnDetails = document.getElementById('turn-details');
-                this.currentPlayerNum = document.getElementById('current-player-num');
+                this.statusIndicator = document.getElementById('status-indicator');
                 this.canvasContainer = document.getElementById('canvas-container');
+                
+                // Mini info elements
+                this.miniPlayer = document.getElementById('mini-player');
+                this.miniMoves = document.getElementById('mini-moves');
+                this.miniWeapon = document.getElementById('mini-weapon');
+                this.miniRange = document.getElementById('mini-range');
+                this.miniDamage = document.getElementById('mini-damage');
                 
                 // Game state
                 this.gameActive = true;
@@ -631,19 +789,20 @@
             }
             
             setupCanvas() {
-                // Get container dimensions
-                const containerWidth = this.canvasContainer.clientWidth;
-                const containerHeight = this.canvasContainer.clientHeight;
+                // Get container dimensions with safe margins
+                const container = this.canvasContainer;
+                const containerWidth = container.clientWidth - 10; // 5px padding each side
+                const containerHeight = container.clientHeight - 10;
                 
-                // Calculate tile size based on container (make grid as big as possible)
+                // Calculate tile size to fit entire grid
                 const maxTileSizeByWidth = Math.floor(containerWidth / this.GRID_SIZE);
                 const maxTileSizeByHeight = Math.floor(containerHeight / this.GRID_SIZE);
                 this.TILE_SIZE = Math.min(maxTileSizeByWidth, maxTileSizeByHeight);
                 
-                // Ensure tile size is at least 30px
-                this.TILE_SIZE = Math.max(this.TILE_SIZE, 30);
+                // Ensure tile size is at least 25px for visibility
+                this.TILE_SIZE = Math.max(this.TILE_SIZE, 25);
                 
-                // Calculate canvas size
+                // Calculate canvas size with safe margin
                 this.CANVAS_SIZE = this.GRID_SIZE * this.TILE_SIZE;
                 
                 // Set canvas dimensions
@@ -654,26 +813,21 @@
                 this.ctx.imageSmoothingEnabled = false;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-                
-                console.log(`Canvas: ${this.CANVAS_SIZE}px, Tile: ${this.TILE_SIZE}px`);
             }
             
             handleResize() {
-                // Update canvas size based on new container dimensions
+                // Update canvas size
                 this.setupCanvas();
                 
-                // Center canvas in container
-                const containerWidth = this.canvasContainer.clientWidth;
-                const containerHeight = this.canvasContainer.clientHeight;
-                
-                // Calculate margins to center
-                const marginLeft = (containerWidth - this.CANVAS_SIZE) / 2;
-                const marginTop = (containerHeight - this.CANVAS_SIZE) / 2;
+                // Center canvas in container with safe margins
+                const container = this.canvasContainer;
+                const marginLeft = Math.max(0, (container.clientWidth - this.CANVAS_SIZE) / 2);
+                const marginTop = Math.max(0, (container.clientHeight - this.CANVAS_SIZE) / 2);
                 
                 this.canvas.style.marginLeft = `${marginLeft}px`;
                 this.canvas.style.marginTop = `${marginTop}px`;
                 
-                // Update aim overlay to match canvas
+                // Update aim overlay to match
                 this.aimOverlay.style.width = `${this.CANVAS_SIZE}px`;
                 this.aimOverlay.style.height = `${this.CANVAS_SIZE}px`;
                 this.aimOverlay.style.marginLeft = `${marginLeft}px`;
@@ -793,10 +947,22 @@
                     }
                 }
                 
-                // Clear corners for spawn points
+                // Clear corners for spawn points (with extra space around)
                 const corners = [[0,14], [0,0], [14,0], [14,14]];
                 corners.forEach(([x,y]) => {
                     this.map[y][x] = null;
+                    // Clear one tile around corners for better visibility
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            if (nx >= 0 && nx < this.GRID_SIZE && ny >= 0 && ny < this.GRID_SIZE) {
+                                if (this.map[ny][nx] && this.map[ny][nx].blocks) {
+                                    this.map[ny][nx] = null;
+                                }
+                            }
+                        }
+                    }
                 });
             }
             
@@ -892,7 +1058,11 @@
                 this.ctx.fillStyle = '#2e7d32';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Draw grid
+                // Draw grid lines
+                this.ctx.strokeStyle = '#3a7d44';
+                this.ctx.lineWidth = 1;
+                
+                // Draw tiles
                 for (let y = 0; y < this.GRID_SIZE; y++) {
                     for (let x = 0; x < this.GRID_SIZE; x++) {
                         const tile = this.map[y][x];
@@ -900,12 +1070,10 @@
                         const screenY = y * this.TILE_SIZE;
                         
                         // Grid lines
-                        this.ctx.strokeStyle = '#3a7d44';
-                        this.ctx.lineWidth = 1;
                         this.ctx.strokeRect(screenX, screenY, this.TILE_SIZE, this.TILE_SIZE);
                         
                         if (tile) {
-                            this.ctx.font = `${this.TILE_SIZE * 0.6}px Arial`;
+                            this.ctx.font = `${Math.max(this.TILE_SIZE * 0.5, 12)}px Arial`;
                             this.ctx.fillText(
                                 tile.type,
                                 screenX + this.TILE_SIZE / 2,
@@ -946,7 +1114,7 @@
                         this.ctx.strokeRect(screenX, screenY, this.TILE_SIZE, this.TILE_SIZE);
                         
                         if (tile) {
-                            this.ctx.font = `${this.TILE_SIZE * 0.6}px Arial`;
+                            this.ctx.font = `${Math.max(this.TILE_SIZE * 0.5, 12)}px Arial`;
                             this.ctx.fillText(
                                 tile.type,
                                 screenX + this.TILE_SIZE / 2,
@@ -973,7 +1141,7 @@
                 this.ctx.arc(
                     screenX + this.TILE_SIZE / 2,
                     screenY + this.TILE_SIZE / 2,
-                    this.TILE_SIZE / 2 - 4,
+                    this.TILE_SIZE / 2 - 2,
                     0,
                     Math.PI * 2
                 );
@@ -988,11 +1156,11 @@
                     this.ctx.translate(-(screenX + this.TILE_SIZE / 2), -(screenY + this.TILE_SIZE / 2));
                     
                     this.ctx.shadowColor = player.color;
-                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowBlur = 8;
                 }
                 
                 // Player emoji
-                this.ctx.font = `${this.TILE_SIZE * 0.6}px Arial`;
+                this.ctx.font = `${Math.max(this.TILE_SIZE * 0.5, 12)}px Arial`;
                 this.ctx.fillStyle = '#fff';
                 this.ctx.fillText(
                     player.emoji,
@@ -1005,10 +1173,10 @@
                 }
                 
                 // Health bar
-                const barWidth = this.TILE_SIZE - 8;
-                const barHeight = Math.max(4, this.TILE_SIZE * 0.1);
-                const barX = screenX + 4;
-                const barY = screenY - barHeight - 2;
+                const barWidth = this.TILE_SIZE - 4;
+                const barHeight = Math.max(3, this.TILE_SIZE * 0.08);
+                const barX = screenX + 2;
+                const barY = screenY - barHeight - 1;
                 
                 this.ctx.fillStyle = '#333';
                 this.ctx.fillRect(barX, barY, barWidth, barHeight);
@@ -1039,7 +1207,6 @@
                 this.updateUI();
                 this.playSound(500);
                 
-                // Show dice roll result
                 alert(`🎲 Rolled ${this.movesLeft} movement points!`);
             }
             
@@ -1060,7 +1227,7 @@
                 clearInterval(this.moveInterval);
                 this.moveInterval = setInterval(() => {
                     this.executeMove();
-                }, 200); // Move every 200ms while button is held
+                }, 200);
             }
             
             stopMove() {
@@ -1201,8 +1368,8 @@
                 if (!house) return;
                 
                 const playerIndex = this.players.indexOf(player);
-                const doorX = 3; // Center of 8x8 grid
-                const doorY = 7; // Bottom row
+                const doorX = 3;
+                const doorY = 7;
                 
                 player.inHouse = house;
                 player.indoorPos = { x: doorX, y: doorY };
@@ -1210,8 +1377,8 @@
                 
                 this.currentHouse = house;
                 this.isIndoor = true;
-                this.movesLeft = 99; // Infinite moves indoors
-                this.hasRolled = true; // Skip dice roll indoors
+                this.movesLeft = 99;
+                this.hasRolled = true;
                 
                 this.updateUI();
                 this.draw();
@@ -1231,13 +1398,11 @@
                     house.playersInside.splice(houseIndex, 1);
                 }
                 
-                // Return to outdoor position at house entrance
                 player.x = house.entranceX;
                 player.y = house.entranceY;
                 player.inHouse = null;
                 player.indoorPos = null;
                 
-                // If no players left in house, exit indoor view
                 if (house.playersInside.length === 0) {
                     this.currentHouse = null;
                     this.isIndoor = false;
@@ -1281,6 +1446,11 @@
                 this.updateAimCursor();
                 this.updateUI();
                 
+                // Show status indicator
+                this.statusIndicator.textContent = "🎯 AIMING MODE - Use movement buttons to aim";
+                this.statusIndicator.className = "status-indicator status-aiming";
+                this.statusIndicator.style.display = 'block';
+                
                 alert("🎯 Aiming Mode Activated!\nUse movement buttons to aim.");
             }
             
@@ -1290,7 +1460,7 @@
                 const player = this.players[this.currentPlayer];
                 const weapon = this.weapons[player.weapon];
                 
-                // Calculate effective range (weapon range + scope bonuses)
+                // Calculate effective range
                 let range = weapon.range;
                 player.gear.forEach(g => {
                     if (g.effect === 'rangeBonus') range += g.value;
@@ -1304,25 +1474,23 @@
                 
                 // SUBSEQUENT MOVES: Must match locked direction
                 if (dx !== this.aim.dx || dy !== this.aim.dy) {
-                    return; // Reject movement in different direction
+                    return;
                 }
                 
                 // Range limit check
                 if (this.aim.steps >= range) {
-                    return; // Cannot aim beyond weapon range
+                    return;
                 }
                 
-                // Calculate new aim position
                 const newX = this.aim.x + dx;
                 const newY = this.aim.y + dy;
                 
-                // Boundary check
                 const maxBound = this.isIndoor ? 8 : this.GRID_SIZE;
                 if (newX < 0 || newY < 0 || newX >= maxBound || newY >= maxBound) {
-                    return; // Out of bounds
+                    return;
                 }
                 
-                // Check for obstacles in line of sight
+                // Check for obstacles
                 if (this.isIndoor) {
                     const tile = this.currentHouse.indoorMap[newY][newX];
                     if (tile && tile.blocks) return;
@@ -1331,7 +1499,6 @@
                     if (tile && tile.blocks) return;
                 }
                 
-                // VALID MOVE: Update aim cursor
                 this.aim.x = newX;
                 this.aim.y = newY;
                 this.aim.steps++;
@@ -1358,7 +1525,6 @@
                     screenY = this.aim.y * this.TILE_SIZE;
                 }
                 
-                // Create aim cursor
                 const cursor = document.createElement('div');
                 cursor.className = 'aim-cell';
                 cursor.style.left = screenX + 'px';
@@ -1368,7 +1534,7 @@
                 
                 this.aimOverlay.appendChild(cursor);
                 
-                // Shotgun spread preview
+                // Shotgun preview
                 const player = this.players[this.currentPlayer];
                 const weapon = this.weapons[player.weapon];
                 
@@ -1382,7 +1548,6 @@
                         const maxBound = this.isIndoor ? 8 : this.GRID_SIZE;
                         if (x < 0 || y < 0 || x >= maxBound || y >= maxBound) return;
                         
-                        // Check if tile is walkable (not blocked)
                         if (this.isIndoor) {
                             const tile = this.currentHouse.indoorMap[y][x];
                             if (tile && tile.blocks) return;
@@ -1449,24 +1614,10 @@
                 this.aim = { x: null, y: null, dx: null, dy: null, steps: 0 };
                 this.aimOverlay.innerHTML = '';
                 this.shotgunPreview.innerHTML = '';
+                this.statusIndicator.style.display = 'none';
                 
                 this.updateUI();
                 this.draw();
-            }
-            
-            findTargetAt(shooter, targetX, targetY) {
-                if (this.isIndoor) {
-                    return this.players.find(p => 
-                        p.alive && p !== shooter &&
-                        p.inHouse === shooter.inHouse &&
-                        p.indoorPos && p.indoorPos.x === targetX && p.indoorPos.y === targetY
-                    );
-                } else {
-                    return this.players.find(p => 
-                        p.alive && p !== shooter &&
-                        !p.inHouse && p.x === targetX && p.y === targetY
-                    );
-                }
             }
             
             fireLinear(shooter, weapon) {
@@ -1523,10 +1674,8 @@
                     return;
                 }
                 
-                // First shot
                 this.applyDamage(shooter, target, weapon.damage);
                 
-                // Second shot after delay
                 setTimeout(() => {
                     if (target.alive) {
                         this.applyDamage(shooter, target, weapon.damage);
@@ -1545,9 +1694,23 @@
                     return;
                 }
                 
-                // Flamethrower ignores line of sight
                 this.applyDamage(shooter, target, weapon.damage);
                 this.playSound(200, 0.4);
+            }
+            
+            findTargetAt(shooter, targetX, targetY) {
+                if (this.isIndoor) {
+                    return this.players.find(p => 
+                        p.alive && p !== shooter &&
+                        p.inHouse === shooter.inHouse &&
+                        p.indoorPos && p.indoorPos.x === targetX && p.indoorPos.y === targetY
+                    );
+                } else {
+                    return this.players.find(p => 
+                        p.alive && p !== shooter &&
+                        !p.inHouse && p.x === targetX && p.y === targetY
+                    );
+                }
             }
             
             checkLineOfSight(shooter, target) {
@@ -1581,18 +1744,14 @@
                 let y = y1;
                 
                 while (true) {
-                    // Skip shooter's starting position
                     if (x !== x1 || y !== y1) {
-                        // Check if current grid tile blocks line of sight
                         if (map[y] && map[y][x] && map[y][x].blocks) {
-                            return false; // Obstacle found
+                            return false;
                         }
                     }
                     
-                    // Reached target
                     if (x === x2 && y === y2) break;
                     
-                    // Bresenham step
                     const e2 = 2 * err;
                     if (e2 > -dy) {
                         err -= dy;
@@ -1604,30 +1763,24 @@
                     }
                 }
                 
-                return true; // Clear line of sight
+                return true;
             }
             
             applyDamage(shooter, target, baseDamage) {
                 let finalDamage = baseDamage;
                 
-                // Apply armor reduction
                 if (target.armor && target.armor.effect === 'damageReduction') {
                     finalDamage = Math.floor(baseDamage * (1 - target.armor.value));
                 }
                 
-                // Apply damage
                 target.hp -= finalDamage;
                 
-                // Visual and audio feedback
-                this.showDamageEffect(target, finalDamage);
                 this.playSound(400 + finalDamage * 2);
                 
-                // Check for elimination
                 if (target.hp <= 0) {
                     target.alive = false;
                     target.hp = 0;
                     
-                    // Remove from house if indoors
                     if (target.inHouse) {
                         const house = target.inHouse;
                         const playerIndex = this.players.indexOf(target);
@@ -1644,7 +1797,6 @@
                     
                     alert(`🎯 Player ${shooterIndex + 1} eliminated Player ${targetIndex + 1}!`);
                     
-                    // Check win condition
                     const alivePlayers = this.players.filter(p => p.alive);
                     if (alivePlayers.length === 1) {
                         const winnerIndex = this.players.findIndex(p => p.alive);
@@ -1654,12 +1806,6 @@
                 }
                 
                 this.updateUI();
-            }
-            
-            showDamageEffect(target, damage) {
-                // This would show a visual damage effect
-                // For now, just update the UI
-                console.log(`Damage dealt: ${damage}`);
             }
             
             pickupItem(player, x, y, indoor = false) {
@@ -1690,16 +1836,16 @@
                     }
                 }
                 
-                // Remove item from map
                 if (indoor) {
                     player.inHouse.indoorMap[y][x] = null;
                 } else {
                     this.map[y][x] = null;
                 }
+                
+                this.updateUI();
             }
             
             endTurn() {
-                // Reset turn state
                 this.movesLeft = 0;
                 this.hasShot = false;
                 this.hasRolled = false;
@@ -1707,16 +1853,15 @@
                 this.aim = { x: null, y: null, dx: null, dy: null, steps: 0 };
                 this.aimOverlay.innerHTML = '';
                 this.shotgunPreview.innerHTML = '';
+                this.statusIndicator.style.display = 'none';
                 
-                // Find next alive player
                 let attempts = 0;
                 do {
                     this.currentPlayer = (this.currentPlayer + 1) % 4;
                     attempts++;
-                    if (attempts > 4) break; // Safety check
+                    if (attempts > 4) break;
                 } while (!this.players[this.currentPlayer].alive);
                 
-                // Update view for new player
                 this.updateViewForCurrentPlayer();
                 this.updateUI();
                 this.draw();
@@ -1737,24 +1882,53 @@
             }
             
             updateUI() {
-                // Update turn indicator
-                this.currentPlayerNum.textContent = this.currentPlayer + 1;
-                this.turnIndicator.style.borderColor = this.players[this.currentPlayer].color;
+                const player = this.players[this.currentPlayer];
+                const weapon = this.weapons[player.weapon];
                 
-                // Update turn details
-                let details = '';
+                // Update mini info
+                this.miniPlayer.textContent = `P${this.currentPlayer + 1} ${player.emoji}`;
+                
                 if (this.aiming) {
-                    details = 'Aiming Mode';
+                    this.miniMoves.textContent = "Aiming...";
+                } else if (player.inHouse) {
+                    this.miniMoves.textContent = "Indoors ∞ moves";
                 } else if (this.hasRolled) {
-                    details = `${this.movesLeft} moves left`;
-                } else if (this.players[this.currentPlayer].inHouse) {
-                    details = 'Indoors - Roll not needed';
+                    this.miniMoves.textContent = `${this.movesLeft} moves left`;
                 } else {
-                    details = 'Need to roll dice';
+                    this.miniMoves.textContent = "Roll dice!";
                 }
-                this.turnDetails.textContent = details;
+                
+                // Update weapon info
+                this.miniWeapon.textContent = weapon.name;
+                
+                // Calculate effective range
+                let range = weapon.range;
+                player.gear.forEach(g => {
+                    if (g.effect === 'rangeBonus') range += g.value;
+                });
+                this.miniRange.textContent = `Range: ${range}`;
+                this.miniDamage.textContent = `Dmg: ${weapon.damage}`;
                 
                 // Update player info panel
+                this.updatePlayerInfoPanel();
+                
+                // Update button states
+                const rollBtn = document.querySelector('.action-btn.roll');
+                const aimBtn = document.querySelector('.action-btn.aim');
+                const shootBtn = document.querySelector('.action-btn.shoot');
+                const endBtn = document.querySelector('.action-btn.end');
+                
+                rollBtn.disabled = this.hasRolled || this.aiming || player.inHouse;
+                aimBtn.disabled = this.hasShot || this.aiming || (!this.hasRolled && !player.inHouse);
+                shootBtn.disabled = !this.aiming;
+                endBtn.disabled = false;
+                
+                [rollBtn, aimBtn, shootBtn, endBtn].forEach(btn => {
+                    btn.style.opacity = btn.disabled ? '0.5' : '1';
+                });
+            }
+            
+            updatePlayerInfoPanel() {
                 const playersInfo = document.getElementById('players-info');
                 playersInfo.innerHTML = '';
                 
@@ -1776,49 +1950,65 @@
                     playerDiv.className = `player-info ${index === this.currentPlayer ? 'current' : ''}`;
                     
                     const weapon = this.weapons[player.weapon];
-                    const gearList = player.gear.map(g => g.emoji).join('');
                     const armorEmoji = player.armor ? player.armor.emoji : '';
+                    const gearList = player.gear.map(g => g.emoji).join(' ');
+                    
+                    let range = weapon.range;
+                    player.gear.forEach(g => {
+                        if (g.effect === 'rangeBonus') range += g.value;
+                    });
                     
                     playerDiv.innerHTML = `
                         <div class="player-header">
                             <span class="player-emoji">${player.emoji}</span>
                             <span class="player-name">Player ${index + 1}</span>
-                            ${player.inHouse ? '<span style="color:#9b59b6; font-size:12px;">🏠</span>' : ''}
+                            ${player.inHouse ? '<span style="color:#9b59b6;">🏠</span>' : ''}
+                            ${index === this.currentPlayer ? '<span style="color:#3498db;">▶️</span>' : ''}
                         </div>
                         <div class="player-hp">
                             <div class="player-hp-bar" style="width: ${(player.hp/player.maxHp)*100}%"></div>
                         </div>
                         <div class="player-stats">
-                            <span>${weapon.emoji} ${weapon.name}</span>
-                            <span>${armorEmoji} ${gearList}</span>
-                            <span>❤️ ${player.hp}</span>
+                            <div class="stat-item">
+                                <span class="stat-label">Weapon:</span>
+                                <span>${weapon.emoji} ${weapon.name}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Range:</span>
+                                <span>${range} tiles</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Damage:</span>
+                                <span>${weapon.damage}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Armor:</span>
+                                <span>${armorEmoji || 'None'}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Gear:</span>
+                                <span>${gearList || 'None'}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Moves:</span>
+                                <span>${player.inHouse ? '∞' : (index === this.currentPlayer && this.hasRolled ? this.movesLeft : '-')}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Health:</span>
+                                <span>${player.hp}/${player.maxHp}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Location:</span>
+                                <span>${player.inHouse ? 'Indoors' : 'Outdoors'}</span>
+                            </div>
                         </div>
                     `;
                     
                     playersInfo.appendChild(playerDiv);
                 });
-                
-                // Update button states
-                const rollBtn = document.querySelector('.action-btn.roll');
-                const aimBtn = document.querySelector('.action-btn.aim');
-                const shootBtn = document.querySelector('.action-btn.shoot');
-                const endBtn = document.querySelector('.action-btn.end');
-                
-                const player = this.players[this.currentPlayer];
-                
-                rollBtn.disabled = this.hasRolled || this.aiming || player.inHouse;
-                aimBtn.disabled = this.hasShot || this.aiming || (!this.hasRolled && !player.inHouse);
-                shootBtn.disabled = !this.aiming;
-                endBtn.disabled = false;
-                
-                // Visual feedback for disabled buttons
-                [rollBtn, aimBtn, shootBtn, endBtn].forEach(btn => {
-                    btn.style.opacity = btn.disabled ? '0.5' : '1';
-                });
             }
             
             playSound(frequency, duration = 0.1, type = 'sine') {
-                // Simple sound feedback
                 try {
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const oscillator = audioContext.createOscillator();
@@ -1836,7 +2026,6 @@
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + duration);
                 } catch (e) {
-                    // Fallback for browsers without Web Audio API
                     console.log('Sound effect');
                 }
             }
@@ -1849,7 +2038,7 @@
             game = new MobileBattleRoyale();
         }
 
-        // Global functions for button actions
+        // Global functions
         function startMove(dx, dy) {
             if (game) game.startMove(dx, dy);
         }
@@ -1874,15 +2063,26 @@
             if (game) game.endTurn();
         }
 
-        function toggleInfoPanel() {
-            const panel = document.getElementById('info-panel');
-            panel.classList.toggle('active');
+        function showPlayerInfo() {
+            document.getElementById('player-info-panel').classList.add('active');
+        }
+
+        function hidePlayerInfo() {
+            document.getElementById('player-info-panel').classList.remove('active');
+        }
+
+        function showRules() {
+            document.getElementById('rules-panel').classList.add('active');
+        }
+
+        function hideRules() {
+            document.getElementById('rules-panel').classList.remove('active');
         }
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', initGame);
 
-        // Prevent context menu on long press
+        // Prevent context menu
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
