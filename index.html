@@ -235,6 +235,13 @@
             background: #e67e22;
             height: 35px;
         }
+        .action-btn.fullscreen-toggle { 
+            background: #8e44ad;
+            height: 35px;
+        }
+        .action-btn.fullscreen-toggle.active { 
+            background: #27ae60;
+        }
 
         /* Center game area */
         #center-game {
@@ -692,6 +699,10 @@
                     <span class="icon">📖</span>
                     <span>Rules</span>
                 </button>
+                <button class="action-btn fullscreen-toggle" id="fullscreen-toggle-btn" onclick="toggleFullscreen()">
+                    <span class="icon">⛶</span>
+                    <span id="fullscreen-label">Fullscreen</span>
+                </button>
                 <button class="action-btn reset" onclick="resetGame()">
                     <span class="icon">🔄</span>
                     <span>Reset</span>
@@ -774,58 +785,6 @@
     <script>
         // Global game instance
         let game = null;
-
-        // Fullscreen functionality
-        async function enterFullscreen() {
-            const elem = document.documentElement;
-            
-            try {
-                // Try different fullscreen methods
-                if (elem.requestFullscreen) {
-                    await elem.requestFullscreen();
-                } else if (elem.mozRequestFullScreen) { /* Firefox */
-                    await elem.mozRequestFullScreen();
-                } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-                    await elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) { /* IE/Edge */
-                    await elem.msRequestFullscreen();
-                }
-                
-                // Fullscreen succeeded - hide overlay and show game
-                setTimeout(() => {
-                    document.getElementById('fullscreen-overlay').style.display = 'none';
-                    checkOrientation();
-                    initGame();
-                }, 200);
-                
-            } catch (err) {
-                // Fullscreen failed or denied - start game anyway
-                console.log('Fullscreen not available or denied:', err);
-                document.getElementById('fullscreen-overlay').style.display = 'none';
-                checkOrientation();
-                initGame();
-            }
-        }
-
-        // Exit fullscreen (for debugging)
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-
-        // Skip fullscreen and start game directly
-        function skipFullscreen() {
-            document.getElementById('fullscreen-overlay').style.display = 'none';
-            checkOrientation();
-            initGame();
-        }
 
         // Check orientation
         function checkOrientation() {
@@ -2174,25 +2133,85 @@
             }
         }
 
-        // Prevent context menu
-        document.addEventListener('contextmenu', e => e.preventDefault());
-
-        // Check if already in fullscreen or landscape
-        window.addEventListener('load', () => {
-            // Check if already fullscreen or on non-mobile
+        // Toggle fullscreen on/off
+        async function toggleFullscreen() {
+            const elem = document.documentElement;
+            const btn = document.getElementById('fullscreen-toggle-btn');
+            const label = document.getElementById('fullscreen-label');
+            
             const isFullscreen = document.fullscreenElement || 
                                 document.webkitFullscreenElement || 
                                 document.mozFullScreenElement || 
                                 document.msFullscreenElement;
             
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            if (!isMobile || isFullscreen) {
-                // Skip fullscreen overlay for non-mobile or already fullscreen
-                document.getElementById('fullscreen-overlay').style.display = 'none';
-                checkOrientation();
-                initGame();
+            try {
+                if (isFullscreen) {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        await document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        await document.msExitFullscreen();
+                    }
+                    btn.classList.remove('active');
+                    label.textContent = 'Fullscreen';
+                } else {
+                    // Enter fullscreen
+                    if (elem.requestFullscreen) {
+                        await elem.requestFullscreen();
+                    } else if (elem.mozRequestFullScreen) {
+                        await elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        await elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        await elem.msRequestFullscreen();
+                    }
+                    btn.classList.add('active');
+                    label.textContent = 'Exit FS';
+                }
+            } catch (err) {
+                console.log('Fullscreen toggle failed:', err);
+                alert('⚠️ Fullscreen not supported on this device/browser');
             }
+        }
+
+        // Update button state when fullscreen changes
+        function updateFullscreenButton() {
+            const btn = document.getElementById('fullscreen-toggle-btn');
+            const label = document.getElementById('fullscreen-label');
+            const isFullscreen = document.fullscreenElement || 
+                                document.webkitFullscreenElement || 
+                                document.mozFullScreenElement || 
+                                document.msFullscreenElement;
+            
+            if (isFullscreen) {
+                btn.classList.add('active');
+                label.textContent = 'Exit FS';
+            } else {
+                btn.classList.remove('active');
+                label.textContent = 'Fullscreen';
+            }
+        }
+
+        // Prevent context menu
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Listen for fullscreen changes to update button
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+        // Start game immediately without fullscreen overlay
+        window.addEventListener('load', () => {
+            // Hide fullscreen overlay and start game directly
+            document.getElementById('fullscreen-overlay').style.display = 'none';
+            checkOrientation();
+            initGame();
+            updateFullscreenButton(); // Set initial button state
         });
     </script>
 </body>
