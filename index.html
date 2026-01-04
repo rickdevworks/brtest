@@ -219,6 +219,9 @@
         }
 
         .action-btn.roll { background: #f39c12; }
+        .action-btn.roll.pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
         .action-btn.aim { background: #e74c3c; }
         .action-btn.shoot { background: #c0392b; }
         .action-btn.end { background: #7f8c8d; }
@@ -241,6 +244,23 @@
         }
         .action-btn.fullscreen-toggle.active { 
             background: #27ae60;
+        }
+        .action-btn.fullscreen-toggle.pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Pulsating glow animation */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 
+                            0 0 30px rgba(255, 215, 0, 0.6),
+                            0 2px 4px rgba(0,0,0,0.3);
+                transform: scale(1.05);
+            }
         }
 
         /* Center game area */
@@ -806,7 +826,10 @@
 
         // Game class
         class MobileBattleRoyale {
-            constructor() {
+            constructor(playerCount = 4) {
+                // Store player count
+                this.playerCount = playerCount;
+                
                 // Core grid constants
                 this.GRID_SIZE = 15;
                 this.INDOOR_SIZE = 8;
@@ -932,32 +955,61 @@
             }
             
             initPlayers() {
-                this.players = [
-                    {
-                        x: 0, y: 14, hp: 100, maxHp: 100,
-                        weapon: 'pistol', armor: null, gear: [],
-                        alive: true, inHouse: null, indoorPos: null,
-                        emoji: '😎', color: '#3498db'
-                    },
-                    {
-                        x: 0, y: 0, hp: 100, maxHp: 100,
-                        weapon: 'pistol', armor: null, gear: [],
-                        alive: true, inHouse: null, indoorPos: null,
-                        emoji: '🤠', color: '#e74c3c'
-                    },
-                    {
-                        x: 14, y: 0, hp: 100, maxHp: 100,
-                        weapon: 'pistol', armor: null, gear: [],
-                        alive: true, inHouse: null, indoorPos: null,
-                        emoji: '🦹', color: '#2ecc71'
-                    },
-                    {
-                        x: 14, y: 14, hp: 100, maxHp: 100,
-                        weapon: 'pistol', armor: null, gear: [],
-                        alive: true, inHouse: null, indoorPos: null,
-                        emoji: '🧙', color: '#f39c12'
-                    }
+                // Random player emoticons pool (excluding Group 4)
+                const playerEmoticons = [
+                    // Group 1 - Classic Faces
+                    '😀', '😎', '🤠', '🥳',
+                    // Group 2 - Cool Characters
+                    '🤓', '🧐', '😇', '🤡',
+                    // Group 3 - Fantasy/Hero
+                    '🦸', '🧙', '🧛', '🧟',
+                    // Group 5 - Fun Characters
+                    '🤖', '👽', '👻', '🐱‍👤'
                 ];
+                
+                // Shuffle and pick emoticons based on player count
+                const shuffled = [...playerEmoticons].sort(() => Math.random() - 0.5);
+                const selectedEmoticons = shuffled.slice(0, this.playerCount);
+                
+                // Define spawn positions and colors based on player count
+                const spawnConfig = {
+                    2: [
+                        { x: 0, y: 14, color: '#3498db' },   // Bottom-left (Player 1)
+                        { x: 14, y: 0, color: '#e74c3c' }    // Top-right (Player 2)
+                    ],
+                    3: [
+                        { x: 0, y: 14, color: '#3498db' },   // Bottom-left (Player 1)
+                        { x: 0, y: 0, color: '#e74c3c' },    // Top-left (Player 2)
+                        { x: 14, y: 0, color: '#2ecc71' }    // Top-right (Player 3)
+                    ],
+                    4: [
+                        { x: 0, y: 14, color: '#3498db' },   // Bottom-left (Player 1)
+                        { x: 0, y: 0, color: '#e74c3c' },    // Top-left (Player 2)
+                        { x: 14, y: 0, color: '#2ecc71' },   // Top-right (Player 3)
+                        { x: 14, y: 14, color: '#f39c12' }   // Bottom-right (Player 4)
+                    ]
+                };
+                
+                const spawns = spawnConfig[this.playerCount];
+                
+                // Create players dynamically
+                this.players = [];
+                for (let i = 0; i < this.playerCount; i++) {
+                    this.players.push({
+                        x: spawns[i].x,
+                        y: spawns[i].y,
+                        hp: 100,
+                        maxHp: 100,
+                        weapon: 'pistol',
+                        armor: null,
+                        gear: [],
+                        alive: true,
+                        inHouse: null,
+                        indoorPos: null,
+                        emoji: selectedEmoticons[i],
+                        color: spawns[i].color
+                    });
+                }
             }
             
             initMap() {
@@ -1950,6 +2002,13 @@
                 [rollBtn, aimBtn, shootBtn, endBtn].forEach(btn => {
                     btn.style.opacity = btn.disabled ? '0.5' : '1';
                 });
+                
+                // Add pulsating glow to Roll Dice button when it's the primary action
+                if (!this.hasRolled && !this.aiming && !player.inHouse) {
+                    rollBtn.classList.add('pulse');
+                } else {
+                    rollBtn.classList.remove('pulse');
+                }
             }
             
             updatePlayerInfoPanel() {
@@ -2205,6 +2264,18 @@
         document.addEventListener('mozfullscreenchange', updateFullscreenButton);
         document.addEventListener('MSFullscreenChange', updateFullscreenButton);
 
+        // Pulse fullscreen button for a few seconds to draw attention
+        function pulseFullscreenButton() {
+            const fsBtn = document.getElementById('fullscreen-toggle-btn');
+            if (fsBtn) {
+                fsBtn.classList.add('pulse');
+                // Remove pulse after 6 seconds (3 full cycles at 2s each)
+                setTimeout(() => {
+                    fsBtn.classList.remove('pulse');
+                }, 6000);
+            }
+        }
+
         // Start game immediately without fullscreen overlay
         window.addEventListener('load', () => {
             // Hide fullscreen overlay and start game directly
@@ -2212,7 +2283,11 @@
             checkOrientation();
             initGame();
             updateFullscreenButton(); // Set initial button state
+            
+            // Pulse fullscreen button for 6 seconds to get user's attention
+            setTimeout(pulseFullscreenButton, 500); // Small delay to ensure DOM is ready
         });
     </script>
 </body>
 </html>
+
