@@ -21,11 +21,13 @@
             width: 100vw;
             height: 100vh;
             position: fixed;
+            /* Force fullscreen */
             height: -webkit-fill-available;
             height: fill-available;
         }
 
         html {
+            /* Force fullscreen on mobile */
             height: -webkit-fill-available;
             height: fill-available;
             overflow: hidden;
@@ -123,6 +125,7 @@
             height: 100vh;
             position: relative;
             overflow: hidden;
+            /* Ensure it fills screen */
             height: -webkit-fill-available;
             height: fill-available;
         }
@@ -135,16 +138,16 @@
             background: #2d3436;
         }
 
-        /* Left controls - WIDER for visibility */
+        /* Left controls - FIXED WIDTH to prevent overflow */
         #left-controls {
-            width: 95px; /* Increased from 85px */
-            min-width: 95px;
-            max-width: 95px;
+            width: 85px;
+            min-width: 85px;
+            max-width: 85px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 6px;
+            padding: 8px 4px;
             gap: 6px;
             background: rgba(45, 52, 54, 0.95);
             border-right: 2px solid #34495e;
@@ -178,17 +181,17 @@
             font-size: 10px;
         }
 
-        /* Action buttons */
+        /* Action buttons - FIXED SIZE to fit */
         .action-btn {
-            width: 85px; /* Increased from 75px */
-            min-width: 85px;
-            max-width: 85px;
+            width: 75px;
+            min-width: 75px;
+            max-width: 75px;
             height: 40px;
             background: #3498db;
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 11px; /* Slightly larger */
+            font-size: 10px;
             font-weight: 600;
             display: flex;
             flex-direction: column;
@@ -253,65 +256,68 @@
         canvas {
             display: block;
             background: #2d3436;
+            /* Center canvas perfectly */
             margin: auto;
             touch-action: none;
         }
 
-        /* Right controls - WIDER for arrow visibility */
+        /* Right controls */
         #right-controls {
-            width: 110px; /* Increased from 100px */
-            min-width: 110px;
-            max-width: 110px;
+            width: 100px;
+            min-width: 100px;
+            max-width: 100px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Changed from center */
+            justify-content: center;
             align-items: center;
-            padding: 8px 6px;
-            gap: 15px; /* Increased gap */
+            padding: 8px 5px;
+            gap: 10px;
             background: rgba(45, 52, 54, 0.95);
             border-left: 2px solid #34495e;
             overflow: hidden;
             box-sizing: border-box;
         }
 
-        /* Movement D-pad - SIMPLIFIED without background */
+        /* Movement D-pad - FIXED POSITION */
         #movement-controls {
             display: grid;
             grid-template-areas:
                 ". up ."
                 "left . right"
                 ". down .";
-            gap: 8px; /* Slightly larger gap */
-            /* REMOVED background, padding, border, and rounded corners */
-            width: 105px; /* Slightly larger */
-            height: 105px;
+            gap: 6px;
+            background: rgba(52, 73, 94, 0.7);
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #2c3e50;
+            width: 90px;
+            height: 90px;
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            margin-top: 10px; /* Added margin */
         }
 
         .movement-btn {
-            width: 50px; /* Slightly larger */
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: #34495e;
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: manipulation;
             transition: all 0.1s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             box-sizing: border-box;
         }
 
         .movement-btn:active {
             background: #2c3e50;
             transform: scale(0.95);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .movement-btn.up { grid-area: up; }
@@ -319,7 +325,7 @@
         .movement-btn.right { grid-area: right; }
         .movement-btn.down { grid-area: down; }
 
-        /* Weapon info - MOVED BELOW arrows with margin */
+        /* Weapon info */
         .weapon-info {
             width: 100%;
             background: rgba(52, 73, 94, 0.7);
@@ -328,7 +334,7 @@
             text-align: center;
             font-size: 10px;
             border: 1px solid #2c3e50;
-            margin-top: 15px; /* Added margin to separate from arrows */
+            margin-top: 5px;
             box-sizing: border-box;
         }
 
@@ -527,71 +533,71 @@
             border-radius: 3px;
         }
 
-        /* Ensure no overflow */
+        /* Ensure no overflow anywhere */
         body, html, #game-container, .game-layout, #center-game, #canvas-container,
         #left-controls, #right-controls, .mini-info, .weapon-info {
             overflow: hidden !important;
         }
 
-        /* Hide browser UI */
+        /* Hide browser UI on mobile */
         @media (display-mode: fullscreen) {
             #game-container {
                 height: 100vh;
             }
         }
 
-        /* Small screens */
+        /* Very small screens */
         @media (max-height: 500px) {
-            #left-controls { width: 85px; min-width: 85px; max-width: 85px; }
-            #right-controls { width: 95px; min-width: 95px; max-width: 95px; }
+            #left-controls { width: 70px; min-width: 70px; max-width: 70px; }
+            #right-controls { width: 85px; min-width: 85px; max-width: 85px; }
             
             .action-btn {
-                width: 75px;
-                min-width: 75px;
-                max-width: 75px;
+                width: 65px;
+                min-width: 65px;
+                max-width: 65px;
                 height: 35px;
-                font-size: 10px;
-            }
-            
-            .movement-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 20px;
-            }
-            
-            #movement-controls {
-                width: 95px;
-                height: 95px;
-                gap: 7px;
-            }
-            
-            .weapon-info {
-                margin-top: 10px;
-            }
-        }
-
-        @media (max-width: 650px) {
-            #left-controls { width: 80px; min-width: 80px; max-width: 80px; }
-            #right-controls { width: 90px; min-width: 90px; max-width: 90px; }
-            
-            .action-btn {
-                width: 70px;
-                min-width: 70px;
-                max-width: 70px;
-                height: 32px;
                 font-size: 9px;
             }
             
             .movement-btn {
-                width: 42px;
-                height: 42px;
-                font-size: 19px;
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
             }
             
             #movement-controls {
-                width: 90px;
-                height: 90px;
-                gap: 6px;
+                width: 80px;
+                height: 80px;
+                gap: 5px;
+            }
+            
+            .mini-info, .weapon-info {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            #left-controls { width: 65px; min-width: 65px; max-width: 65px; }
+            #right-controls { width: 75px; min-width: 75px; max-width: 75px; }
+            
+            .action-btn {
+                width: 60px;
+                min-width: 60px;
+                max-width: 60px;
+                height: 32px;
+                font-size: 8px;
+            }
+            
+            .movement-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            #movement-controls {
+                width: 70px;
+                height: 70px;
+                gap: 4px;
             }
         }
 
@@ -685,7 +691,7 @@
 
             <!-- Right controls -->
             <div id="right-controls">
-                <!-- Movement D-pad - NO BACKGROUND ELEMENT -->
+                <!-- Movement D-pad -->
                 <div id="movement-controls">
                     <button class="movement-btn up" onpointerdown="startMove(0, -1)" onpointerup="stopMove()">↑</button>
                     <button class="movement-btn left" onpointerdown="startMove(-1, 0)" onpointerup="stopMove()">←</button>
@@ -693,7 +699,7 @@
                     <button class="movement-btn down" onpointerdown="startMove(0, 1)" onpointerup="stopMove()">↓</button>
                 </div>
                 
-                <!-- Weapon info - BELOW arrows with proper spacing -->
+                <!-- Weapon info -->
                 <div class="weapon-info">
                     <div class="weapon-name" id="mini-weapon">Pistol</div>
                     <div id="mini-range">Range: 4</div>
@@ -754,21 +760,36 @@
         function enterFullscreen() {
             const elem = document.documentElement;
             
+            // Try different fullscreen methods
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) {
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
                 elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) {
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
                 elem.msRequestFullscreen();
             }
             
+            // Hide overlay and show game
             setTimeout(() => {
                 document.getElementById('fullscreen-overlay').style.display = 'none';
                 checkOrientation();
                 initGame();
             }, 500);
+        }
+
+        // Exit fullscreen (for debugging)
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
 
         // Check orientation
@@ -789,7 +810,7 @@
             }
         }
 
-        // Game class with all fixes
+        // Game class
         class MobileBattleRoyale {
             constructor() {
                 // Core grid constants
@@ -813,11 +834,11 @@
                 this.miniRange = document.getElementById('mini-range');
                 this.miniDamage = document.getElementById('mini-damage');
                 
-                // Game state - FIXED: No movement until dice rolled
+                // Game state
                 this.gameActive = true;
                 this.currentPlayer = 0;
-                this.movesLeft = 0; // Start with 0 moves
-                this.hasRolled = false; // Must roll dice first
+                this.movesLeft = 0;
+                this.hasRolled = false;
                 this.hasShot = false;
                 this.aiming = false;
                 this.isIndoor = false;
@@ -849,40 +870,51 @@
             }
             
             setupCanvas() {
+                // Get container dimensions
                 const container = this.canvasContainer;
                 const containerWidth = container.clientWidth;
                 const containerHeight = container.clientHeight;
                 
+                // Calculate tile size based on available space
                 const maxTileSizeByWidth = Math.floor(containerWidth / this.GRID_SIZE);
                 const maxTileSizeByHeight = Math.floor(containerHeight / this.GRID_SIZE);
                 this.TILE_SIZE = Math.min(maxTileSizeByWidth, maxTileSizeByHeight);
                 
+                // Ensure minimum visibility
                 this.TILE_SIZE = Math.max(this.TILE_SIZE, 25);
                 
+                // Calculate canvas size
                 this.CANVAS_SIZE = this.GRID_SIZE * this.TILE_SIZE;
                 
+                // Set canvas dimensions
                 this.canvas.width = this.CANVAS_SIZE;
                 this.canvas.height = this.CANVAS_SIZE;
                 
+                // Setup context
                 this.ctx.imageSmoothingEnabled = false;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
             }
             
             handleResize() {
+                // Update canvas size
                 this.setupCanvas();
                 
+                // Center canvas perfectly in container
                 const container = this.canvasContainer;
                 const containerWidth = container.clientWidth;
                 const containerHeight = container.clientHeight;
                 
+                // Calculate exact center position
                 const centerX = (containerWidth - this.CANVAS_SIZE) / 2;
                 const centerY = (containerHeight - this.CANVAS_SIZE) / 2;
                 
+                // Apply centering with pixel-perfect positioning
                 this.canvas.style.position = 'absolute';
                 this.canvas.style.left = `${Math.max(0, centerX)}px`;
                 this.canvas.style.top = `${Math.max(0, centerY)}px`;
                 
+                // Update overlays to match exactly
                 this.aimOverlay.style.position = 'absolute';
                 this.aimOverlay.style.left = `${Math.max(0, centerX)}px`;
                 this.aimOverlay.style.top = `${Math.max(0, centerY)}px`;
@@ -895,6 +927,7 @@
                 this.shotgunPreview.style.width = `${this.CANVAS_SIZE}px`;
                 this.shotgunPreview.style.height = `${this.CANVAS_SIZE}px`;
                 
+                // Redraw
                 if (this.gameActive) {
                     this.draw();
                     if (this.aiming) {
@@ -936,6 +969,7 @@
                 this.map = [];
                 this.houses = [];
                 
+                // Create 15x15 grid with cleared corners
                 for (let y = 0; y < this.GRID_SIZE; y++) {
                     this.map[y] = [];
                     for (let x = 0; x < this.GRID_SIZE; x++) {
@@ -961,8 +995,10 @@
                     }
                 }
                 
+                // Clear spawn corners and surrounding area
                 const corners = [[0,14], [0,0], [14,0], [14,14]];
                 corners.forEach(([x,y]) => {
+                    // Clear 2x2 area for each spawn point
                     for (let dx = -1; dx <= 1; dx++) {
                         for (let dy = -1; dy <= 1; dy++) {
                             const nx = x + dx;
@@ -986,9 +1022,9 @@
                     }
                 }
                 
-                // Place door at bottom center
-                const doorX = Math.floor(indoorSize / 2) - 1; // 3
-                const doorY = indoorSize - 1; // 7
+                // Place door
+                const doorX = Math.floor(indoorSize / 2) - 1;
+                const doorY = indoorSize - 1;
                 indoorMap[doorY][doorX] = { type: '🚪', blocks: false, door: true };
                 
                 // Walls
@@ -1007,8 +1043,7 @@
                 
                 for (let y = 1; y < indoorSize - 1; y++) {
                     for (let x = 1; x < indoorSize - 1; x++) {
-                        // Skip area around door (3x3 area)
-                        if (x >= doorX-1 && x <= doorX+1 && y >= doorY-2 && y <= doorY) continue;
+                        if (x >= doorX-1 && x <= doorX+1 && y >= doorY-1) continue;
                         
                         const r = Math.random();
                         if (r < 0.25) {
@@ -1063,15 +1098,18 @@
             }
             
             drawOutdoor() {
+                // Draw background
                 this.ctx.fillStyle = '#2e7d32';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
+                // Draw grid
                 for (let y = 0; y < this.GRID_SIZE; y++) {
                     for (let x = 0; x < this.GRID_SIZE; x++) {
                         const tile = this.map[y][x];
                         const screenX = x * this.TILE_SIZE;
                         const screenY = y * this.TILE_SIZE;
                         
+                        // Grid lines
                         this.ctx.strokeStyle = '#3a7d44';
                         this.ctx.lineWidth = 1;
                         this.ctx.strokeRect(screenX, screenY, this.TILE_SIZE, this.TILE_SIZE);
@@ -1087,6 +1125,7 @@
                     }
                 }
                 
+                // Draw players
                 this.players.forEach((player, index) => {
                     if (!player.alive || player.inHouse) return;
                     this.drawPlayer(player, index, player.x, player.y);
@@ -1096,6 +1135,7 @@
             drawIndoor() {
                 if (!this.currentHouse) return;
                 
+                // Draw floor
                 this.ctx.fillStyle = '#8b4513';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -1103,6 +1143,7 @@
                 const offsetX = (this.GRID_SIZE - indoorSize) * this.TILE_SIZE / 2;
                 const offsetY = (this.GRID_SIZE - indoorSize) * this.TILE_SIZE / 2;
                 
+                // Draw indoor grid
                 for (let y = 0; y < indoorSize; y++) {
                     for (let x = 0; x < indoorSize; x++) {
                         const tile = this.currentHouse.indoorMap[y][x];
@@ -1124,6 +1165,7 @@
                     }
                 }
                 
+                // Draw indoor players
                 this.players.forEach((player, index) => {
                     if (!player.alive || player.inHouse !== this.currentHouse) return;
                     this.drawPlayer(player, index, player.indoorPos.x, player.indoorPos.y, offsetX, offsetY);
@@ -1134,6 +1176,7 @@
                 const screenX = gridX * this.TILE_SIZE + offsetX;
                 const screenY = gridY * this.TILE_SIZE + offsetY;
                 
+                // Draw player circle
                 this.ctx.fillStyle = player.color;
                 this.ctx.beginPath();
                 this.ctx.arc(
@@ -1145,6 +1188,7 @@
                 );
                 this.ctx.fill();
                 
+                // Pulsing for current player
                 if (index === this.currentPlayer) {
                     this.ctx.save();
                     const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
@@ -1155,6 +1199,7 @@
                     this.ctx.shadowBlur = 8;
                 }
                 
+                // Player emoji
                 this.ctx.font = `${Math.max(this.TILE_SIZE * 0.5, 12)}px Arial`;
                 this.ctx.fillStyle = '#fff';
                 this.ctx.fillText(
@@ -1167,6 +1212,7 @@
                     this.ctx.restore();
                 }
                 
+                // Health bar
                 const barWidth = this.TILE_SIZE - 4;
                 const barHeight = Math.max(3, this.TILE_SIZE * 0.08);
                 const barX = screenX + 2;
@@ -1189,10 +1235,8 @@
                 
                 const player = this.players[this.currentPlayer];
                 
-                // FIXED: Only set infinite moves AFTER entering house, not before
-                // Roll dice normally for outdoor players
                 if (player.inHouse) {
-                    this.movesLeft = 99; // Infinite moves only when already in house
+                    this.movesLeft = 99;
                 } else {
                     this.movesLeft = Math.floor(Math.random() * 6) + 1 + 
                                     Math.floor(Math.random() * 6) + 1;
@@ -1210,36 +1254,13 @@
                     return;
                 }
                 
-                // FIXED: Check if player can move
-                const player = this.players[this.currentPlayer];
-                if (player.inHouse) {
-                    // Inside house: infinite movement allowed
-                    this.moveDirection = { dx, dy };
+                this.moveDirection = { dx, dy };
+                this.executeMove();
+                
+                clearInterval(this.moveInterval);
+                this.moveInterval = setInterval(() => {
                     this.executeMove();
-                    
-                    clearInterval(this.moveInterval);
-                    this.moveInterval = setInterval(() => {
-                        this.executeMove();
-                    }, 200);
-                } else {
-                    // Outside: need to have rolled dice AND have moves left
-                    if (!this.hasRolled) {
-                        alert("You need to roll dice first!");
-                        return;
-                    }
-                    if (this.movesLeft <= 0) {
-                        alert("No moves left!");
-                        return;
-                    }
-                    
-                    this.moveDirection = { dx, dy };
-                    this.executeMove();
-                    
-                    clearInterval(this.moveInterval);
-                    this.moveInterval = setInterval(() => {
-                        this.executeMove();
-                    }, 200);
-                }
+                }, 200);
             }
             
             stopMove() {
@@ -1258,11 +1279,7 @@
                 if (player.inHouse) {
                     this.movePlayerIndoor(player, dx, dy);
                 } else {
-                    // FIXED: Check moves for outdoor movement
-                    if (this.movesLeft <= 0) {
-                        this.stopMove();
-                        return;
-                    }
+                    if (this.movesLeft <= 0 && this.hasRolled) return;
                     this.movePlayerOutdoor(player, dx, dy);
                 }
             }
@@ -1284,7 +1301,7 @@
                     
                     player.x = newX;
                     player.y = newY;
-                    this.movesLeft--; // FIXED: Decrement moves
+                    if (this.hasRolled) this.movesLeft--;
                     this.updateUI();
                     this.draw();
                     this.playSound(300);
@@ -1301,7 +1318,7 @@
                 if (tile.item) {
                     player.x = newX;
                     player.y = newY;
-                    this.movesLeft--; // FIXED: Decrement moves
+                    if (this.hasRolled) this.movesLeft--;
                     this.pickupItem(player, newX, newY);
                     this.updateUI();
                     this.draw();
@@ -1366,75 +1383,14 @@
                 }
             }
             
-            enterHouse(player, houseX, houseY) {
-                const house = this.houses.find(h => h.x === houseX && h.y === houseY);
-                if (!house) return;
-                
-                const playerIndex = this.players.indexOf(player);
-                const doorX = 3; // Bottom center
-                const doorY = 7; // Bottom row
-                
-                // FIXED: Player enters at door position, doesn't move upward
-                player.inHouse = house;
-                player.indoorPos = { x: doorX, y: doorY }; // Stays at door
-                house.playersInside.push(playerIndex);
-                
-                this.currentHouse = house;
-                this.isIndoor = true;
-                // FIXED: Set infinite moves AFTER entering house
-                this.movesLeft = 99;
-                this.hasRolled = true; // Mark as rolled so they can move immediately
-                
-                this.updateUI();
-                this.draw();
-                this.playSound(800);
-                
-                alert(`🏠 Player ${playerIndex + 1} entered the house!\nYou now have infinite movement inside.`);
-            }
-            
-            exitHouse(player) {
-                const house = player.inHouse;
-                if (!house) return;
-                
-                const playerIndex = this.players.indexOf(player);
-                const houseIndex = house.playersInside.indexOf(playerIndex);
-                
-                if (houseIndex > -1) {
-                    house.playersInside.splice(houseIndex, 1);
-                }
-                
-                player.x = house.entranceX;
-                player.y = house.entranceY;
-                player.inHouse = null;
-                player.indoorPos = null;
-                
-                if (house.playersInside.length === 0) {
-                    this.currentHouse = null;
-                    this.isIndoor = false;
-                }
-                
-                // FIXED: Reset movement state when exiting house
-                this.movesLeft = 0;
-                this.hasRolled = false;
-                
-                this.updateViewForCurrentPlayer();
-                this.updateUI();
-                this.draw();
-                this.playSound(600);
-                
-                alert(`🚪 Player ${playerIndex + 1} exited the house!\nRoll dice to move outdoors.`);
-            }
-            
             enterAim() {
                 if (this.hasShot || this.aiming) return;
-                
-                const player = this.players[this.currentPlayer];
-                
-                // FIXED: Check if player can aim (must have rolled dice or be in house)
-                if (!player.inHouse && !this.hasRolled) {
+                if (!this.hasRolled && !this.players[this.currentPlayer].inHouse) {
                     alert("You need to roll dice first!");
                     return;
                 }
+                
+                const player = this.players[this.currentPlayer];
                 
                 if (this.isIndoor && player.indoorPos) {
                     this.aim = {
@@ -1463,7 +1419,6 @@
                 this.statusIndicator.style.display = 'block';
             }
             
-            // ... rest of the methods remain the same ...
             moveAim(dx, dy) {
                 if (!this.aiming) return;
                 
@@ -1842,7 +1797,6 @@
             }
             
             endTurn() {
-                // Reset turn state
                 this.movesLeft = 0;
                 this.hasShot = false;
                 this.hasRolled = false;
@@ -1852,7 +1806,6 @@
                 this.shotgunPreview.innerHTML = '';
                 this.statusIndicator.style.display = 'none';
                 
-                // Find next alive player
                 let attempts = 0;
                 do {
                     this.currentPlayer = (this.currentPlayer + 1) % 4;
@@ -1860,7 +1813,6 @@
                     if (attempts > 4) break;
                 } while (!this.players[this.currentPlayer].alive);
                 
-                // Update view for new player
                 this.updateViewForCurrentPlayer();
                 this.updateUI();
                 this.draw();
@@ -2033,6 +1985,7 @@
         function initGame() {
             game = new MobileBattleRoyale();
             
+            // Handle resize events
             window.addEventListener('resize', () => {
                 checkOrientation();
                 if (game) game.handleResize();
@@ -2045,6 +1998,7 @@
                 }, 100);
             });
             
+            // Fullscreen change events
             document.addEventListener('fullscreenchange', handleFullscreenChange);
             document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -2052,6 +2006,7 @@
         }
 
         function handleFullscreenChange() {
+            // Force resize after fullscreen change
             setTimeout(() => {
                 if (game) game.handleResize();
             }, 100);
@@ -2103,6 +2058,7 @@
 
         // Check if already in fullscreen or landscape
         window.addEventListener('load', () => {
+            // Check if already fullscreen or on non-mobile
             const isFullscreen = document.fullscreenElement || 
                                 document.webkitFullscreenElement || 
                                 document.mozFullScreenElement || 
@@ -2111,6 +2067,7 @@
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             
             if (!isMobile || isFullscreen) {
+                // Skip fullscreen overlay for non-mobile or already fullscreen
                 document.getElementById('fullscreen-overlay').style.display = 'none';
                 checkOrientation();
                 initGame();
