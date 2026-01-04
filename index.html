@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mobile Battle Royale</title>
     <style>
         * {
@@ -21,10 +21,20 @@
             width: 100vw;
             height: 100vh;
             position: fixed;
+            /* Force fullscreen */
+            height: -webkit-fill-available;
+            height: fill-available;
         }
 
-        /* Landscape warning - unskippable */
-        #landscape-warning {
+        html {
+            /* Force fullscreen on mobile */
+            height: -webkit-fill-available;
+            height: fill-available;
+            overflow: hidden;
+        }
+
+        /* Fullscreen overlay */
+        #fullscreen-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -32,6 +42,49 @@
             height: 100%;
             background: #1a1a2e;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #fullscreen-overlay h1 {
+            color: #3498db;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        #fullscreen-btn {
+            background: #2ecc71;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 15px 30px;
+            margin: 20px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        #fullscreen-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Landscape warning */
+        #landscape-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -65,69 +118,80 @@
             75% { transform: rotate(-90deg); }
         }
 
-        /* Main game layout - optimized for small screens */
+        /* Main game container */
         #game-container {
             display: none;
             width: 100vw;
             height: 100vh;
             position: relative;
             overflow: hidden;
+            /* Ensure it fills screen */
+            height: -webkit-fill-available;
+            height: fill-available;
         }
 
-        /* Compact game layout */
+        /* Game layout */
         .game-layout {
             display: flex;
             height: 100%;
             width: 100%;
-            gap: 2px;
-            padding: 2px;
             background: #2d3436;
         }
 
-        /* Left side - compact actions */
+        /* Left controls - FIXED WIDTH to prevent overflow */
         #left-controls {
-            width: 80px;
+            width: 85px;
+            min-width: 85px;
+            max-width: 85px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 5px;
-            gap: 8px;
+            padding: 8px 4px;
+            gap: 6px;
+            background: rgba(45, 52, 54, 0.95);
+            border-right: 2px solid #34495e;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* Top mini info bar */
+        /* Mini info */
         .mini-info {
             width: 100%;
-            background: rgba(45, 52, 54, 0.95);
+            background: rgba(52, 73, 94, 0.7);
             border-radius: 8px;
-            padding: 8px;
+            padding: 6px 4px;
             text-align: center;
-            font-size: 12px;
-            line-height: 1.3;
-            border: 1px solid #34495e;
-            margin-bottom: 5px;
+            font-size: 11px;
+            line-height: 1.2;
+            border: 1px solid #2c3e50;
+            margin-bottom: 2px;
+            box-sizing: border-box;
         }
 
         .current-player {
             color: #3498db;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
+            margin-bottom: 2px;
         }
 
         .moves-info {
             color: #f39c12;
-            margin-top: 2px;
+            font-size: 10px;
         }
 
-        /* Action buttons - compact */
+        /* Action buttons - FIXED SIZE to fit */
         .action-btn {
-            width: 70px;
+            width: 75px;
+            min-width: 75px;
+            max-width: 75px;
             height: 40px;
             background: #3498db;
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             display: flex;
             flex-direction: column;
@@ -138,6 +202,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             padding: 2px;
             text-align: center;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .action-btn:active {
@@ -146,8 +212,8 @@
         }
 
         .action-btn .icon {
-            font-size: 16px;
-            margin-bottom: 2px;
+            font-size: 14px;
+            margin-bottom: 1px;
         }
 
         .action-btn.roll { background: #f39c12; }
@@ -164,17 +230,17 @@
             height: 35px;
         }
 
-        /* Center game area - maximizes grid space */
+        /* Center game area */
         #center-game {
             flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
-            max-height: 100vh;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Canvas container - fills center with safe margins */
+        /* Canvas container - PERFECTLY CENTERED */
         #canvas-container {
             flex: 1;
             display: flex;
@@ -183,58 +249,69 @@
             position: relative;
             overflow: hidden;
             background: #2d3436;
-            padding: 5px;
+            padding: 0;
+            margin: 0;
         }
 
         canvas {
             display: block;
             background: #2d3436;
-            max-width: 100%;
-            max-height: 100%;
+            /* Center canvas perfectly */
+            margin: auto;
             touch-action: none;
-            /* Ensure canvas doesn't exceed container */
-            box-sizing: content-box;
         }
 
-        /* Right side - movement controls */
+        /* Right controls */
         #right-controls {
             width: 100px;
+            min-width: 100px;
+            max-width: 100px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 5px;
+            padding: 8px 5px;
             gap: 10px;
+            background: rgba(45, 52, 54, 0.95);
+            border-left: 2px solid #34495e;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* Movement D-pad */
+        /* Movement D-pad - FIXED POSITION */
         #movement-controls {
             display: grid;
             grid-template-areas:
                 ". up ."
                 "left . right"
                 ". down .";
-            gap: 8px;
-            background: rgba(45, 52, 54, 0.95);
+            gap: 6px;
+            background: rgba(52, 73, 94, 0.7);
             padding: 10px;
             border-radius: 20px;
-            border: 1px solid #34495e;
+            border: 1px solid #2c3e50;
+            width: 90px;
+            height: 90px;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
         }
 
         .movement-btn {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: #34495e;
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: manipulation;
             transition: all 0.1s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-sizing: border-box;
         }
 
         .movement-btn:active {
@@ -248,25 +325,59 @@
         .movement-btn.right { grid-area: right; }
         .movement-btn.down { grid-area: down; }
 
-        /* Weapon info on right side */
+        /* Weapon info */
         .weapon-info {
             width: 100%;
-            background: rgba(45, 52, 54, 0.95);
+            background: rgba(52, 73, 94, 0.7);
             border-radius: 8px;
-            padding: 8px;
+            padding: 6px 4px;
             text-align: center;
-            font-size: 12px;
-            border: 1px solid #34495e;
+            font-size: 10px;
+            border: 1px solid #2c3e50;
             margin-top: 5px;
+            box-sizing: border-box;
         }
 
         .weapon-name {
             color: #e74c3c;
             font-weight: bold;
-            margin-bottom: 3px;
+            font-size: 11px;
+            margin-bottom: 2px;
         }
 
-        /* Panels overlay */
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 60;
+            backdrop-filter: blur(5px);
+            border: 1px solid;
+            max-width: 90%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-aiming {
+            border-color: yellow;
+            color: yellow;
+            animation: pulse-status 1s infinite;
+        }
+
+        @keyframes pulse-status {
+            0%, 100% { box-shadow: 0 0 5px currentColor; }
+            50% { box-shadow: 0 0 15px currentColor; }
+        }
+
+        /* Panels */
         .panel {
             position: fixed;
             top: 0;
@@ -287,14 +398,14 @@
 
         .panel-content {
             background: rgba(45, 52, 54, 0.95);
-            margin: 15px;
+            margin: 10px;
             border-radius: 15px;
             padding: 15px;
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            max-height: calc(100vh - 30px);
+            max-height: calc(100vh - 20px);
         }
 
         .panel-header {
@@ -320,6 +431,7 @@
             padding: 5px;
         }
 
+        /* Players list */
         .players-list {
             flex: 1;
             overflow-y: auto;
@@ -329,8 +441,9 @@
         .player-info {
             background: rgba(52, 73, 94, 0.5);
             border-radius: 10px;
-            padding: 12px;
+            padding: 10px;
             margin-bottom: 8px;
+            font-size: 12px;
         }
 
         .player-info.current {
@@ -341,26 +454,26 @@
         .player-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 6px;
         }
 
         .player-emoji {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .player-name {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .player-hp {
             width: 100%;
-            height: 6px;
+            height: 5px;
             background: #2c3e50;
             border-radius: 3px;
             overflow: hidden;
-            margin: 6px 0;
+            margin: 5px 0;
         }
 
         .player-hp-bar {
@@ -372,61 +485,21 @@
         .player-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 11px;
+            gap: 6px;
+            font-size: 10px;
             color: #95a5a6;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            overflow: hidden;
         }
 
         .stat-label {
             color: #ecf0f1;
-        }
-
-        .gear-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .gear-item {
-            font-size: 14px;
-        }
-
-        /* Rules panel */
-        .rules-list {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .rule-section {
-            background: rgba(52, 73, 94, 0.5);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .rule-section h3 {
-            color: #3498db;
-            margin-bottom: 8px;
-            font-size: 15px;
-        }
-
-        .rule-section ul {
-            padding-left: 20px;
-            color: #ecf0f1;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        .rule-section li {
-            margin-bottom: 5px;
+            white-space: nowrap;
         }
 
         /* Aim overlay */
@@ -460,78 +533,29 @@
             border-radius: 3px;
         }
 
-        /* Status indicators */
-        .status-indicator {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 60;
-            backdrop-filter: blur(5px);
-            border: 1px solid;
-            max-width: 90%;
-            text-align: center;
+        /* Ensure no overflow anywhere */
+        body, html, #game-container, .game-layout, #center-game, #canvas-container,
+        #left-controls, #right-controls, .mini-info, .weapon-info {
+            overflow: hidden !important;
         }
 
-        .status-aiming {
-            border-color: yellow;
-            color: yellow;
-            animation: pulse-status 1s infinite;
+        /* Hide browser UI on mobile */
+        @media (display-mode: fullscreen) {
+            #game-container {
+                height: 100vh;
+            }
         }
 
-        @keyframes pulse-status {
-            0%, 100% { box-shadow: 0 0 5px currentColor; }
-            50% { box-shadow: 0 0 15px currentColor; }
-        }
-
-        /* Mobile optimization */
-        @media (max-height: 600px) {
-            #left-controls { width: 70px; }
-            #right-controls { width: 85px; }
+        /* Very small screens */
+        @media (max-height: 500px) {
+            #left-controls { width: 70px; min-width: 70px; max-width: 70px; }
+            #right-controls { width: 85px; min-width: 85px; max-width: 85px; }
             
             .action-btn {
-                width: 60px;
+                width: 65px;
+                min-width: 65px;
+                max-width: 65px;
                 height: 35px;
-                font-size: 10px;
-            }
-            
-            .action-btn .icon {
-                font-size: 14px;
-            }
-            
-            .movement-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 20px;
-            }
-            
-            .mini-info, .weapon-info {
-                font-size: 10px;
-                padding: 6px;
-            }
-            
-            .current-player {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .game-layout {
-                gap: 1px;
-                padding: 1px;
-            }
-            
-            #left-controls { width: 65px; }
-            #right-controls { width: 75px; }
-            
-            .action-btn {
-                width: 55px;
-                height: 32px;
                 font-size: 9px;
             }
             
@@ -539,6 +563,41 @@
                 width: 40px;
                 height: 40px;
                 font-size: 18px;
+            }
+            
+            #movement-controls {
+                width: 80px;
+                height: 80px;
+                gap: 5px;
+            }
+            
+            .mini-info, .weapon-info {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            #left-controls { width: 65px; min-width: 65px; max-width: 65px; }
+            #right-controls { width: 75px; min-width: 75px; max-width: 75px; }
+            
+            .action-btn {
+                width: 60px;
+                min-width: 60px;
+                max-width: 60px;
+                height: 32px;
+                font-size: 8px;
+            }
+            
+            .movement-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            #movement-controls {
+                width: 70px;
+                height: 70px;
+                gap: 4px;
             }
         }
 
@@ -550,14 +609,25 @@
                 display: flex !important;
             }
         }
-
-        /* Ensure no scrolling */
-        body, html, #game-container, .game-layout, #center-game, #canvas-container {
-            overflow: hidden;
-        }
     </style>
 </head>
 <body>
+    <!-- Fullscreen overlay -->
+    <div id="fullscreen-overlay">
+        <h1>🎮 Mobile Battle Royale</h1>
+        <p style="margin-bottom: 20px; font-size: 16px; max-width: 400px;">
+            A turn-based tactical combat game for mobile devices.<br>
+            For best experience, enable fullscreen mode.
+        </p>
+        <button id="fullscreen-btn" onclick="enterFullscreen()">
+            <span>📱</span> Enter Fullscreen
+        </button>
+        <p style="margin-top: 20px; font-size: 14px; color: #95a5a6;">
+            If fullscreen doesn't work, the game will still function.<br>
+            Make sure your device is in landscape mode.
+        </p>
+    </div>
+
     <!-- Landscape warning -->
     <div id="landscape-warning">
         <h1>🔄 Please Rotate Your Device</h1>
@@ -568,13 +638,13 @@
 
     <!-- Main game container -->
     <div id="game-container">
-        <!-- Status indicator for aiming mode -->
+        <!-- Status indicator -->
         <div id="status-indicator" class="status-indicator" style="display: none;"></div>
         
         <div class="game-layout">
-            <!-- Left side: Action buttons and mini info -->
+            <!-- Left controls -->
             <div id="left-controls">
-                <!-- Mini player info at top -->
+                <!-- Mini info -->
                 <div class="mini-info">
                     <div class="current-player" id="mini-player">P1</div>
                     <div class="moves-info" id="mini-moves">Roll dice!</div>
@@ -598,7 +668,7 @@
                     <span>End Turn</span>
                 </button>
                 
-                <!-- Extra buttons at bottom -->
+                <!-- Extra buttons -->
                 <button class="action-btn info" onclick="showPlayerInfo()">
                     <span class="icon">👤</span>
                     <span>Players</span>
@@ -609,7 +679,7 @@
                 </button>
             </div>
 
-            <!-- Center: Game area -->
+            <!-- Center game area -->
             <div id="center-game">
                 <!-- Canvas container -->
                 <div id="canvas-container">
@@ -619,7 +689,7 @@
                 </div>
             </div>
 
-            <!-- Right side: Movement controls and weapon info -->
+            <!-- Right controls -->
             <div id="right-controls">
                 <!-- Movement D-pad -->
                 <div id="movement-controls">
@@ -638,30 +708,27 @@
             </div>
         </div>
 
-        <!-- Player Info Panel -->
+        <!-- Panels -->
         <div id="player-info-panel" class="panel">
             <div class="panel-content">
                 <div class="panel-header">
                     <h2>👥 Player Information</h2>
                     <button class="close-btn" onclick="hidePlayerInfo()">✕</button>
                 </div>
-                <div class="players-list" id="players-info">
-                    <!-- Player info will be inserted here -->
-                </div>
+                <div class="players-list" id="players-info"></div>
             </div>
         </div>
 
-        <!-- Rules Panel -->
         <div id="rules-panel" class="panel">
             <div class="panel-content">
                 <div class="panel-header">
                     <h2>📖 Game Rules</h2>
                     <button class="close-btn" onclick="hideRules()">✕</button>
                 </div>
-                <div class="rules-list">
-                    <div class="rule-section">
-                        <h3>🎯 How to Play</h3>
-                        <ul>
+                <div id="rules-content" style="flex: 1; overflow-y: auto; padding-right: 5px; font-size: 13px;">
+                    <div style="background: rgba(52,73,94,0.5); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                        <h3 style="color: #3498db; margin-bottom: 8px;">🎯 How to Play</h3>
+                        <ul style="padding-left: 20px;">
                             <li><strong>Roll Dice</strong> to get movement points (2-12)</li>
                             <li><strong>Move</strong> your character with the D-pad</li>
                             <li><strong>Aim</strong> at opponents (starts from your position)</li>
@@ -670,47 +737,14 @@
                         </ul>
                     </div>
                     
-                    <div class="rule-section">
-                        <h3>🏠 Houses & Items</h3>
-                        <ul>
+                    <div style="background: rgba(52,73,94,0.5); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                        <h3 style="color: #3498db; margin-bottom: 8px;">🏠 Houses & Items</h3>
+                        <ul style="padding-left: 20px;">
                             <li>Enter <strong>Houses</strong> for loot and cover</li>
                             <li>Inside houses: <strong>Infinite movement</strong></li>
                             <li>Find <strong>Weapons</strong> in crates 📦</li>
                             <li>Collect <strong>Armor</strong> 🛡️ for damage reduction</li>
                             <li>Heal with <strong>Food</strong> 🍗🍎🥤</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="rule-section">
-                        <h3>🔫 Weapons</h3>
-                        <ul>
-                            <li><strong>Pistol</strong>: Balanced (20 dmg, 4 range)</li>
-                            <li><strong>Shotgun</strong>: Spread (40 dmg, 2 range)</li>
-                            <li><strong>Rifle</strong>: Long range (30 dmg, 8 range)</li>
-                            <li><strong>SMG</strong>: Rapid fire (15×2 dmg, 3 range)</li>
-                            <li><strong>Flamethrower</strong>: Ignores cover (25 dmg, 2 range)</li>
-                            <li><strong>Sniper</strong>: High damage (50 dmg, 12 range)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="rule-section">
-                        <h3>🎮 Combat</h3>
-                        <ul>
-                            <li>Line of sight required (except flamethrower)</li>
-                            <li>Trees 🌳 and Rocks 🪨 block shots</li>
-                            <li>Walls 🧱 block movement and shots</li>
-                            <li>Armor reduces damage by 30%</li>
-                            <li>Scope 🔭 increases weapon range</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="rule-section">
-                        <h3>🏆 Winning</h3>
-                        <ul>
-                            <li>Last player standing wins</li>
-                            <li>Eliminate all opponents</li>
-                            <li>Watch your health ❤️</li>
-                            <li>Use cover strategically</li>
                         </ul>
                     </div>
                 </div>
@@ -719,14 +753,71 @@
     </div>
 
     <script>
-        // Mobile Battle Royale Game - Final Optimized Version
+        // Global game instance
+        let game = null;
+
+        // Fullscreen functionality
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            
+            // Try different fullscreen methods
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+            
+            // Hide overlay and show game
+            setTimeout(() => {
+                document.getElementById('fullscreen-overlay').style.display = 'none';
+                checkOrientation();
+                initGame();
+            }, 500);
+        }
+
+        // Exit fullscreen (for debugging)
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+
+        // Check orientation
+        function checkOrientation() {
+            const warning = document.getElementById('landscape-warning');
+            const gameContainer = document.getElementById('game-container');
+            
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (isLandscape || !isMobile) {
+                warning.style.display = 'none';
+                gameContainer.style.display = 'block';
+                if (game) game.handleResize();
+            } else {
+                warning.style.display = 'flex';
+                gameContainer.style.display = 'none';
+            }
+        }
+
+        // Game class
         class MobileBattleRoyale {
             constructor() {
                 // Core grid constants
                 this.GRID_SIZE = 15;
                 this.INDOOR_SIZE = 8;
-                this.TILE_SIZE = 0; // Dynamic based on screen
-                this.CANVAS_SIZE = 0; // Dynamic
+                this.TILE_SIZE = 0;
+                this.CANVAS_SIZE = 0;
                 
                 // Game elements
                 this.canvas = document.getElementById('gameCanvas');
@@ -766,43 +857,33 @@
                     steps: 0
                 };
                 
-                // Initialize game
+                // Initialize
                 this.initPlayers();
                 this.initMap();
                 this.initWeapons();
                 this.initGear();
                 
-                // Setup canvas and handle resize
+                // Setup canvas
                 this.setupCanvas();
-                window.addEventListener('resize', () => this.handleResize());
-                window.addEventListener('orientationchange', () => {
-                    setTimeout(() => {
-                        this.checkOrientation();
-                        this.handleResize();
-                    }, 100);
-                });
-                
-                this.handleResize();
-                this.checkOrientation();
                 this.updateUI();
                 this.draw();
             }
             
             setupCanvas() {
-                // Get container dimensions with safe margins
+                // Get container dimensions
                 const container = this.canvasContainer;
-                const containerWidth = container.clientWidth - 10; // 5px padding each side
-                const containerHeight = container.clientHeight - 10;
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
                 
-                // Calculate tile size to fit entire grid
+                // Calculate tile size based on available space
                 const maxTileSizeByWidth = Math.floor(containerWidth / this.GRID_SIZE);
                 const maxTileSizeByHeight = Math.floor(containerHeight / this.GRID_SIZE);
                 this.TILE_SIZE = Math.min(maxTileSizeByWidth, maxTileSizeByHeight);
                 
-                // Ensure tile size is at least 25px for visibility
+                // Ensure minimum visibility
                 this.TILE_SIZE = Math.max(this.TILE_SIZE, 25);
                 
-                // Calculate canvas size with safe margin
+                // Calculate canvas size
                 this.CANVAS_SIZE = this.GRID_SIZE * this.TILE_SIZE;
                 
                 // Set canvas dimensions
@@ -819,24 +900,32 @@
                 // Update canvas size
                 this.setupCanvas();
                 
-                // Center canvas in container with safe margins
+                // Center canvas perfectly in container
                 const container = this.canvasContainer;
-                const marginLeft = Math.max(0, (container.clientWidth - this.CANVAS_SIZE) / 2);
-                const marginTop = Math.max(0, (container.clientHeight - this.CANVAS_SIZE) / 2);
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
                 
-                this.canvas.style.marginLeft = `${marginLeft}px`;
-                this.canvas.style.marginTop = `${marginTop}px`;
+                // Calculate exact center position
+                const centerX = (containerWidth - this.CANVAS_SIZE) / 2;
+                const centerY = (containerHeight - this.CANVAS_SIZE) / 2;
                 
-                // Update aim overlay to match
+                // Apply centering with pixel-perfect positioning
+                this.canvas.style.position = 'absolute';
+                this.canvas.style.left = `${Math.max(0, centerX)}px`;
+                this.canvas.style.top = `${Math.max(0, centerY)}px`;
+                
+                // Update overlays to match exactly
+                this.aimOverlay.style.position = 'absolute';
+                this.aimOverlay.style.left = `${Math.max(0, centerX)}px`;
+                this.aimOverlay.style.top = `${Math.max(0, centerY)}px`;
                 this.aimOverlay.style.width = `${this.CANVAS_SIZE}px`;
                 this.aimOverlay.style.height = `${this.CANVAS_SIZE}px`;
-                this.aimOverlay.style.marginLeft = `${marginLeft}px`;
-                this.aimOverlay.style.marginTop = `${marginTop}px`;
                 
+                this.shotgunPreview.style.position = 'absolute';
+                this.shotgunPreview.style.left = `${Math.max(0, centerX)}px`;
+                this.shotgunPreview.style.top = `${Math.max(0, centerY)}px`;
                 this.shotgunPreview.style.width = `${this.CANVAS_SIZE}px`;
                 this.shotgunPreview.style.height = `${this.CANVAS_SIZE}px`;
-                this.shotgunPreview.style.marginLeft = `${marginLeft}px`;
-                this.shotgunPreview.style.marginTop = `${marginTop}px`;
                 
                 // Redraw
                 if (this.gameActive) {
@@ -847,72 +936,31 @@
                 }
             }
             
-            checkOrientation() {
-                const warning = document.getElementById('landscape-warning');
-                const gameContainer = document.getElementById('game-container');
-                
-                // Check if device is in landscape
-                const isLandscape = window.innerWidth > window.innerHeight;
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                
-                if (isLandscape || !isMobile) {
-                    warning.style.display = 'none';
-                    gameContainer.style.display = 'block';
-                } else {
-                    warning.style.display = 'flex';
-                    gameContainer.style.display = 'none';
-                }
-            }
-            
             initPlayers() {
                 this.players = [
                     {
-                        x: 0, y: 14,
-                        hp: 100, maxHp: 100,
-                        weapon: 'pistol',
-                        armor: null,
-                        gear: [],
-                        alive: true,
-                        inHouse: null,
-                        indoorPos: null,
-                        emoji: '😎',
-                        color: '#3498db'
+                        x: 0, y: 14, hp: 100, maxHp: 100,
+                        weapon: 'pistol', armor: null, gear: [],
+                        alive: true, inHouse: null, indoorPos: null,
+                        emoji: '😎', color: '#3498db'
                     },
                     {
-                        x: 0, y: 0,
-                        hp: 100, maxHp: 100,
-                        weapon: 'pistol',
-                        armor: null,
-                        gear: [],
-                        alive: true,
-                        inHouse: null,
-                        indoorPos: null,
-                        emoji: '🤠',
-                        color: '#e74c3c'
+                        x: 0, y: 0, hp: 100, maxHp: 100,
+                        weapon: 'pistol', armor: null, gear: [],
+                        alive: true, inHouse: null, indoorPos: null,
+                        emoji: '🤠', color: '#e74c3c'
                     },
                     {
-                        x: 14, y: 0,
-                        hp: 100, maxHp: 100,
-                        weapon: 'pistol',
-                        armor: null,
-                        gear: [],
-                        alive: true,
-                        inHouse: null,
-                        indoorPos: null,
-                        emoji: '🦹',
-                        color: '#2ecc71'
+                        x: 14, y: 0, hp: 100, maxHp: 100,
+                        weapon: 'pistol', armor: null, gear: [],
+                        alive: true, inHouse: null, indoorPos: null,
+                        emoji: '🦹', color: '#2ecc71'
                     },
                     {
-                        x: 14, y: 14,
-                        hp: 100, maxHp: 100,
-                        weapon: 'pistol',
-                        armor: null,
-                        gear: [],
-                        alive: true,
-                        inHouse: null,
-                        indoorPos: null,
-                        emoji: '🧙',
-                        color: '#f39c12'
+                        x: 14, y: 14, hp: 100, maxHp: 100,
+                        weapon: 'pistol', armor: null, gear: [],
+                        alive: true, inHouse: null, indoorPos: null,
+                        emoji: '🧙', color: '#f39c12'
                     }
                 ];
             }
@@ -921,7 +969,7 @@
                 this.map = [];
                 this.houses = [];
                 
-                // Create 15x15 grid
+                // Create 15x15 grid with cleared corners
                 for (let y = 0; y < this.GRID_SIZE; y++) {
                     this.map[y] = [];
                     for (let x = 0; x < this.GRID_SIZE; x++) {
@@ -947,19 +995,16 @@
                     }
                 }
                 
-                // Clear corners for spawn points (with extra space around)
+                // Clear spawn corners and surrounding area
                 const corners = [[0,14], [0,0], [14,0], [14,14]];
                 corners.forEach(([x,y]) => {
-                    this.map[y][x] = null;
-                    // Clear one tile around corners for better visibility
+                    // Clear 2x2 area for each spawn point
                     for (let dx = -1; dx <= 1; dx++) {
                         for (let dy = -1; dy <= 1; dy++) {
                             const nx = x + dx;
                             const ny = y + dy;
                             if (nx >= 0 && nx < this.GRID_SIZE && ny >= 0 && ny < this.GRID_SIZE) {
-                                if (this.map[ny][nx] && this.map[ny][nx].blocks) {
-                                    this.map[ny][nx] = null;
-                                }
+                                this.map[ny][nx] = null;
                             }
                         }
                     }
@@ -998,7 +1043,6 @@
                 
                 for (let y = 1; y < indoorSize - 1; y++) {
                     for (let x = 1; x < indoorSize - 1; x++) {
-                        // Skip area around door
                         if (x >= doorX-1 && x <= doorX+1 && y >= doorY-1) continue;
                         
                         const r = Math.random();
@@ -1054,15 +1098,11 @@
             }
             
             drawOutdoor() {
-                // Draw grass background
+                // Draw background
                 this.ctx.fillStyle = '#2e7d32';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Draw grid lines
-                this.ctx.strokeStyle = '#3a7d44';
-                this.ctx.lineWidth = 1;
-                
-                // Draw tiles
+                // Draw grid
                 for (let y = 0; y < this.GRID_SIZE; y++) {
                     for (let x = 0; x < this.GRID_SIZE; x++) {
                         const tile = this.map[y][x];
@@ -1070,6 +1110,8 @@
                         const screenY = y * this.TILE_SIZE;
                         
                         // Grid lines
+                        this.ctx.strokeStyle = '#3a7d44';
+                        this.ctx.lineWidth = 1;
                         this.ctx.strokeRect(screenX, screenY, this.TILE_SIZE, this.TILE_SIZE);
                         
                         if (tile) {
@@ -1093,7 +1135,7 @@
             drawIndoor() {
                 if (!this.currentHouse) return;
                 
-                // Draw wooden floor
+                // Draw floor
                 this.ctx.fillStyle = '#8b4513';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -1108,7 +1150,6 @@
                         const screenX = x * this.TILE_SIZE + offsetX;
                         const screenY = y * this.TILE_SIZE + offsetY;
                         
-                        // Grid lines
                         this.ctx.strokeStyle = '#a0522d';
                         this.ctx.lineWidth = 1;
                         this.ctx.strokeRect(screenX, screenY, this.TILE_SIZE, this.TILE_SIZE);
@@ -1154,7 +1195,6 @@
                     this.ctx.translate(screenX + this.TILE_SIZE / 2, screenY + this.TILE_SIZE / 2);
                     this.ctx.scale(pulseScale, pulseScale);
                     this.ctx.translate(-(screenX + this.TILE_SIZE / 2), -(screenY + this.TILE_SIZE / 2));
-                    
                     this.ctx.shadowColor = player.color;
                     this.ctx.shadowBlur = 8;
                 }
@@ -1196,9 +1236,8 @@
                 const player = this.players[this.currentPlayer];
                 
                 if (player.inHouse) {
-                    this.movesLeft = 99; // Infinite moves indoors
+                    this.movesLeft = 99;
                 } else {
-                    // Roll 2 dice
                     this.movesLeft = Math.floor(Math.random() * 6) + 1 + 
                                     Math.floor(Math.random() * 6) + 1;
                 }
@@ -1206,24 +1245,18 @@
                 this.hasRolled = true;
                 this.updateUI();
                 this.playSound(500);
-                
                 alert(`🎲 Rolled ${this.movesLeft} movement points!`);
             }
             
             startMove(dx, dy) {
                 if (this.aiming) {
-                    // In aim mode, move aim cursor
                     this.moveAim(dx, dy);
                     return;
                 }
                 
-                // In movement mode, start continuous movement
                 this.moveDirection = { dx, dy };
-                
-                // Move immediately once
                 this.executeMove();
                 
-                // Then set up interval for continuous movement
                 clearInterval(this.moveInterval);
                 this.moveInterval = setInterval(() => {
                     this.executeMove();
@@ -1255,16 +1288,13 @@
                 const newX = player.x + dx;
                 const newY = player.y + dy;
                 
-                // Boundary check
                 if (newX < 0 || newY < 0 || newX >= this.GRID_SIZE || newY >= this.GRID_SIZE) {
                     return;
                 }
                 
                 const tile = this.map[newY][newX];
                 
-                // Empty tile
                 if (!tile) {
-                    // Check for collision with other players
                     const collision = this.players.some(p => 
                         p.alive && p !== player && !p.inHouse && p.x === newX && p.y === newY);
                     if (collision) return;
@@ -1278,16 +1308,13 @@
                     return;
                 }
                 
-                // Blocking tile
                 if (tile.blocks) return;
                 
-                // House entrance
                 if (tile.house) {
                     this.enterHouse(player, newX, newY);
                     return;
                 }
                 
-                // Item crate
                 if (tile.item) {
                     player.x = newX;
                     player.y = newY;
@@ -1306,14 +1333,11 @@
                 const newX = player.indoorPos.x + dx;
                 const newY = player.indoorPos.y + dy;
                 
-                // Boundary check
                 if (newX < 0 || newY < 0 || newX >= 8 || newY >= 8) return;
                 
                 const tile = player.inHouse.indoorMap[newY][newX];
                 
-                // Empty tile
                 if (!tile) {
-                    // Check for collision
                     const collision = this.players.find(p => 
                         p.alive && p !== player && 
                         p.inHouse === player.inHouse &&
@@ -1329,16 +1353,13 @@
                     return;
                 }
                 
-                // Blocking tile
                 if (tile.blocks) return;
                 
-                // Door (exit)
                 if (tile.door) {
                     this.exitHouse(player);
                     return;
                 }
                 
-                // Food item
                 if (tile.food) {
                     player.indoorPos.x = newX;
                     player.indoorPos.y = newY;
@@ -1351,7 +1372,6 @@
                     return;
                 }
                 
-                // Item chest
                 if (tile.item) {
                     player.indoorPos.x = newX;
                     player.indoorPos.y = newY;
@@ -1363,57 +1383,6 @@
                 }
             }
             
-            enterHouse(player, houseX, houseY) {
-                const house = this.houses.find(h => h.x === houseX && h.y === houseY);
-                if (!house) return;
-                
-                const playerIndex = this.players.indexOf(player);
-                const doorX = 3;
-                const doorY = 7;
-                
-                player.inHouse = house;
-                player.indoorPos = { x: doorX, y: doorY };
-                house.playersInside.push(playerIndex);
-                
-                this.currentHouse = house;
-                this.isIndoor = true;
-                this.movesLeft = 99;
-                this.hasRolled = true;
-                
-                this.updateUI();
-                this.draw();
-                this.playSound(800);
-                
-                alert(`🏠 Player ${playerIndex + 1} entered the house!`);
-            }
-            
-            exitHouse(player) {
-                const house = player.inHouse;
-                if (!house) return;
-                
-                const playerIndex = this.players.indexOf(player);
-                const houseIndex = house.playersInside.indexOf(playerIndex);
-                
-                if (houseIndex > -1) {
-                    house.playersInside.splice(houseIndex, 1);
-                }
-                
-                player.x = house.entranceX;
-                player.y = house.entranceY;
-                player.inHouse = null;
-                player.indoorPos = null;
-                
-                if (house.playersInside.length === 0) {
-                    this.currentHouse = null;
-                    this.isIndoor = false;
-                }
-                
-                this.updateViewForCurrentPlayer();
-                this.playSound(600);
-                
-                alert(`🚪 Player ${playerIndex + 1} exited the house!`);
-            }
-            
             enterAim() {
                 if (this.hasShot || this.aiming) return;
                 if (!this.hasRolled && !this.players[this.currentPlayer].inHouse) {
@@ -1423,7 +1392,6 @@
                 
                 const player = this.players[this.currentPlayer];
                 
-                // Initialize aim at player's current position
                 if (this.isIndoor && player.indoorPos) {
                     this.aim = {
                         x: player.indoorPos.x,
@@ -1446,12 +1414,9 @@
                 this.updateAimCursor();
                 this.updateUI();
                 
-                // Show status indicator
                 this.statusIndicator.textContent = "🎯 AIMING MODE - Use movement buttons to aim";
                 this.statusIndicator.className = "status-indicator status-aiming";
                 this.statusIndicator.style.display = 'block';
-                
-                alert("🎯 Aiming Mode Activated!\nUse movement buttons to aim.");
             }
             
             moveAim(dx, dy) {
@@ -1460,37 +1425,25 @@
                 const player = this.players[this.currentPlayer];
                 const weapon = this.weapons[player.weapon];
                 
-                // Calculate effective range
                 let range = weapon.range;
                 player.gear.forEach(g => {
                     if (g.effect === 'rangeBonus') range += g.value;
                 });
                 
-                // FIRST MOVE: Lock direction
                 if (this.aim.dx === null && this.aim.dy === null) {
                     this.aim.dx = dx;
                     this.aim.dy = dy;
                 }
                 
-                // SUBSEQUENT MOVES: Must match locked direction
-                if (dx !== this.aim.dx || dy !== this.aim.dy) {
-                    return;
-                }
-                
-                // Range limit check
-                if (this.aim.steps >= range) {
-                    return;
-                }
+                if (dx !== this.aim.dx || dy !== this.aim.dy) return;
+                if (this.aim.steps >= range) return;
                 
                 const newX = this.aim.x + dx;
                 const newY = this.aim.y + dy;
                 
                 const maxBound = this.isIndoor ? 8 : this.GRID_SIZE;
-                if (newX < 0 || newY < 0 || newX >= maxBound || newY >= maxBound) {
-                    return;
-                }
+                if (newX < 0 || newY < 0 || newX >= maxBound || newY >= maxBound) return;
                 
-                // Check for obstacles
                 if (this.isIndoor) {
                     const tile = this.currentHouse.indoorMap[newY][newX];
                     if (tile && tile.blocks) return;
@@ -1534,7 +1487,6 @@
                 
                 this.aimOverlay.appendChild(cursor);
                 
-                // Shotgun preview
                 const player = this.players[this.currentPlayer];
                 const weapon = this.weapons[player.weapon];
                 
@@ -1733,7 +1685,6 @@
                     map = this.map;
                 }
                 
-                // Bresenham's line algorithm
                 const dx = Math.abs(x2 - x1);
                 const dy = Math.abs(y2 - y1);
                 const sx = (x1 < x2) ? 1 : -1;
@@ -1891,9 +1842,9 @@
                 if (this.aiming) {
                     this.miniMoves.textContent = "Aiming...";
                 } else if (player.inHouse) {
-                    this.miniMoves.textContent = "Indoors ∞ moves";
+                    this.miniMoves.textContent = "Indoors ∞";
                 } else if (this.hasRolled) {
-                    this.miniMoves.textContent = `${this.movesLeft} moves left`;
+                    this.miniMoves.textContent = `${this.movesLeft} moves`;
                 } else {
                     this.miniMoves.textContent = "Roll dice!";
                 }
@@ -1901,7 +1852,6 @@
                 // Update weapon info
                 this.miniWeapon.textContent = weapon.name;
                 
-                // Calculate effective range
                 let range = weapon.range;
                 player.gear.forEach(g => {
                     if (g.effect === 'rangeBonus') range += g.value;
@@ -2032,10 +1982,34 @@
         }
 
         // Initialize game
-        let game;
-
         function initGame() {
             game = new MobileBattleRoyale();
+            
+            // Handle resize events
+            window.addEventListener('resize', () => {
+                checkOrientation();
+                if (game) game.handleResize();
+            });
+            
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    checkOrientation();
+                    if (game) game.handleResize();
+                }, 100);
+            });
+            
+            // Fullscreen change events
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            // Force resize after fullscreen change
+            setTimeout(() => {
+                if (game) game.handleResize();
+            }, 100);
         }
 
         // Global functions
@@ -2079,11 +2053,26 @@
             document.getElementById('rules-panel').classList.remove('active');
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initGame);
-
         // Prevent context menu
         document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Check if already in fullscreen or landscape
+        window.addEventListener('load', () => {
+            // Check if already fullscreen or on non-mobile
+            const isFullscreen = document.fullscreenElement || 
+                                document.webkitFullscreenElement || 
+                                document.mozFullScreenElement || 
+                                document.msFullscreenElement;
+            
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (!isMobile || isFullscreen) {
+                // Skip fullscreen overlay for non-mobile or already fullscreen
+                document.getElementById('fullscreen-overlay').style.display = 'none';
+                checkOrientation();
+                initGame();
+            }
+        });
     </script>
 </body>
 </html>
