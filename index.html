@@ -1421,6 +1421,79 @@
                 }
             }
             
+            enterHouse(player, houseX, houseY) {
+                // Find the house at this position
+                const house = this.houses.find(h => h.x === houseX && h.y === houseY);
+                if (!house) return;
+                
+                // Find the door position in the indoor map
+                let doorX = null, doorY = null;
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const tile = house.indoorMap[y][x];
+                        if (tile && tile.door) {
+                            doorX = x;
+                            doorY = y;
+                            break;
+                        }
+                    }
+                    if (doorX !== null) break;
+                }
+                
+                if (doorX === null || doorY === null) return;
+                
+                // Set player as inside the house
+                player.inHouse = house;
+                player.indoorPos = { x: doorX, y: doorY };
+                
+                // Add player to house's player list
+                const playerIndex = this.players.indexOf(player);
+                if (!house.playersInside.includes(playerIndex)) {
+                    house.playersInside.push(playerIndex);
+                }
+                
+                // Update view if this is the current player
+                if (this.players[this.currentPlayer] === player) {
+                    this.currentHouse = house;
+                    this.isIndoor = true;
+                }
+                
+                this.updateUI();
+                this.draw();
+                this.playSound(400);
+            }
+            
+            exitHouse(player) {
+                if (!player.inHouse) return;
+                
+                const house = player.inHouse;
+                const houseX = house.x;
+                const houseY = house.y;
+                
+                // Remove player from house's player list
+                const playerIndex = this.players.indexOf(player);
+                const housePlayerIndex = house.playersInside.indexOf(playerIndex);
+                if (housePlayerIndex > -1) {
+                    house.playersInside.splice(housePlayerIndex, 1);
+                }
+                
+                // Place player back at house entrance
+                player.x = houseX;
+                player.y = houseY;
+                player.inHouse = null;
+                player.indoorPos = null;
+                
+                // Update view if this is the current player
+                if (this.players[this.currentPlayer] === player) {
+                    this.currentHouse = null;
+                    this.isIndoor = false;
+                }
+                
+                this.updateUI();
+                this.draw();
+                this.playSound(400);
+            }
+            
             enterAim() {
                 if (this.hasShot || this.aiming) return;
                 if (!this.hasRolled && !this.players[this.currentPlayer].inHouse) {
